@@ -16,14 +16,18 @@ local hl_tbl = {
     PmenuSbar    =  { bg = "#383838" },
 
     -- statusline
-    StatusLineFT      = { bg = "#fe9b30", fg = "#101010" },
-    StatusLineFTSep   = { bg = "#222222", fg = "#fe9b30" },
-    StatusLineGitSepL = { bg = "#222222", fg = "#303030" },
-    StatusLineGit     = { bg = "#303030", fg = "#888888" },
-    StatusLineGitSepR = { bg = "#222222", fg = "#303030" },
+    StatusLineFT        = { bg = "#fe9b30", fg = "#101010" },
+    StatusLineFTSep     = { bg = "#222222", fg = "#fe9b30" },
+
+    StatusLineGitSepL   = { bg = "#222222", fg = "#303030" },
+    StatusLineGit       = { bg = "#222222", fg = "#888888" },
+    StatusLineGitAdd    = { bg = "#303030", fg = "#AFC460" },
+    StatusLineGitRemove = { bg = "#303030", fg = "#C53B82" },
+    StatusLineGitChange = { bg = "#303030", fg = "#fe9b30" },
+    StatusLineGitSepR   = { bg = "#222222", fg = "#303030" },
 
     StatusLinePathSepL = { bg = "#202020", fg = "#202020" },
-    StatusLinePATH     = { bg = "#202020", fg = "#404040" },
+    StatusLinePATH     = { bg = "#202020", fg = "#383838" },
     StatusLineMod      = { bg = "#202020", fg = "#AFC460" },
     StatusLinePathSepR = { bg = "#202020", fg = "#202020" },
 

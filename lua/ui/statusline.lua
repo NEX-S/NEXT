@@ -1,57 +1,51 @@
 local api = vim.api
 
-local function git_diff_stats()
-    local abs_bufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':p')
+_G.STATUSLINE_GIT_STATUS = function ()
+    local filename = api.nvim_buf_get_name(0)
+    local lines = api.nvim_buf_get_lines(0, 0, -1, false)
+    local content = table.concat(lines, "\n")
 
-    local diff_output = vim.fn.systemlist('git diff --numstat ' .. abs_bufname)
+    local tmpfile = os.tmpname()
+    local file = io.open(tmpfile, 'w')
+    file:write(content)
+    file:close()
 
-    local added, deleted, modified = 0, 0, 0
+    local diff = vim.fn.system("git diff -- " .. filename .. " " .. tmpfile)
 
-    -- git_toplevel 是你的 Git 仓库的根目录路径
-    local git_toplevel = vim.fn.system('git rev-parse --show-toplevel'):gsub('\n', '')
+    local added, changed, deleted = 0, 0, 0
 
-    for _, line in ipairs(diff_output) do
-        local a, d, f = line:match('(%d+)[\t%s]+(%d+)[\t%s]+(.+)')
-        local abs_f = vim.fn.fnamemodify(git_toplevel .. '/' .. f, ':p')
-        if abs_f == abs_bufname then
-            added = added + tonumber(a)
-            deleted = deleted + tonumber(d)
+    for line in diff:gmatch("[^\r\n]+") do
+        local start_char = line:sub(1,1)
+        if start_char == "+" and line:sub(1,3) ~= "+++" then
+            added = added + 1
+        elseif start_char == "-" and line:sub(1,3) ~= "---" then
+            deleted = deleted + 1
         end
     end
 
-    -- 使用math.min来计算修改的行数
-    modified = math.min(added, deleted)
-    added = added - modified
-    deleted = deleted - modified
+    changed = math.min(added, deleted)
+    added = added - changed
+    deleted = deleted - changed
 
-    return string.format("+%d -%d ~%d", added, deleted, modified)
+    return "%#StatusLineGitAdd# + " .. added .. "%#StatusLineGitChange# ~ " .. changed .. "%#StatusLineGitRemove# - " .. deleted 
 end
 
-print(git_diff_stats())
-
--- local function git_diff ()
---     local filename = api.nvim_buf_get_name(0)
---     local diff = vim.fn.system("git diff " .. filename)
---     local added, deleted = 0, 0
+-- local ft_icon = {
+--     lua  = "",
+--     vim  = "",
+--     html = "",
+--     c    = "",
+--     php  = "▼",
+--     markdown = " ",
+-- }
 -- 
---     for line in diff:gmatch("[^\r\n]+") do
---         local start_char = line:sub(1,1)
---         if start_char == "+" and line:sub(1,3) ~= "+++" then
---             added = added + 1
---         elseif start_char == "-" and line:sub(1,3) ~= "---" then
---             deleted = deleted + 1
---         end
---     end
--- 
---     local changed = math.min(added, deleted)
--- 
---     return "+" .. (added-changed) .. " -" .. (deleted-changed) .. " ~" .. changed
+-- _G.STATUSLINE_FT_ICON = function ()
+--     return ft_icon[vim.bo.ft] or ''
 -- end
 
 local L_FT   = "%#StatusLineFT# %Y %#StatusLineFTSep#"
-local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit# GIT_STATUS %#StatusLineGitSepR#"
--- local L_PATH = "%#StatusLinePATH# %F %{% &modified ? '%#StatusLineMod#' : '' %}"
-local L_PATH  = "%#StatusLinePathSepL#%#StatusLinePATH# %F %{% &modified ? '%#StatusLineMod# ' : '' %}%#StatusLinePathSepR#"
+local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit#%{% v:lua.STATUSLINE_GIT_STATUS() %} %#StatusLineGitSepR#"
+local L_PATH  = "%#StatusLinePathSepL#%#StatusLinePATH#%F %{% &modified ? '%#StatusLineMod# ' : '' %}%#StatusLinePathSepR#"
 
 local R_LINE = "%#StatusLineRowSep#%#StatusLineRow# %l / %L "
 local R_CHAR = "%#StatusLineCharSepL#%#StatusLineChar# %c   %B %#StatusLineCharSepR#"
