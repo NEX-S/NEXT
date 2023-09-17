@@ -2,8 +2,7 @@ local api = vim.api
 
 local hl_tbl = {
     Normal       =  { bg = "#222222", fg = "#cccccc" },
-    -- NonText      =  { fg = "#282828" },
-    NonText      =  { fg = "#343434" },
+    NonText      =  { fg = "#303030" },
     SignColumn   =  { bg = "#202020" },
     LineNr       =  { fg = "#555555" },
     CursorLine   =  { bg = "#262626" },
@@ -25,7 +24,7 @@ local hl_tbl = {
 
     StatusLinePathSepL = { bg = "#202020", fg = "#262626" },
     StatusLinePATH     = { bg = "#262626", fg = "#404040" },
-    StatusLineMod     =  { bg = "#262626", fg = "#AFC460" },
+    StatusLineMod      = { bg = "#262626", fg = "#AFC460" },
     StatusLinePathSepR = { bg = "#202020", fg = "#262626" },
 
     StatusLineRow     = { bg = "#9d7cd8", fg = "#000000" },
@@ -68,35 +67,36 @@ for key, value in pairs(hl_tbl) do
 end
 
 local ts_tbl = {
-    ["@variable"]       = { fg = "#777777" },  -- var name
-    ["@string"]         = { fg = "#484848" },  -- string
-    ["@keyword"]        = { fg = "#666666" },  -- local return function
-    ["@function"]       = { fg = "#9C8FDC" },  -- function
-    ["@parameter"]      = { fg = "#9C8FDC" },  -- func args
-    ["@number"]         = { fg = "#555555" },  -- number
-    ["@constant"]       = { fg = "#C53B82" },  -- M.
-    ["@boolean"]        = { fg = "#C53B82" },  -- true false
-    ["@conditional"]    = { fg = "#9C8FDC" },  -- if then
-    ["@repeat"]         = { fg = "#999999", italic = true },  -- for while
-    ["@operator"]       = { fg = "#666666" },  -- =
-    ["@punctuation"]    = { fg = "#444444" },  -- [] ,
-    ["@constructor"]    = { fg = "#444444" },  -- { }
-    ["@field"]          = { fg = "#555555" },  -- table key
-    ["@method"]         = { fg = "#C53B82" },  -- :match :gsub
-    ["@comment"]        = { fg = "#383838", italic = false }, -- comment
-    ["@type"]           = { fg = "#555555" },  -- C: int float ..
-    ["@property"]       = { fg = "#9D7CD8" },  -- C: ->xxx
-    ["@include"]        = { fg = "#C3E88D" },  -- C: include
-    ["@text.todo"]      = { fg = "#C3E88D" },  -- C: include
-    ["@constant.builtin"]    = { fg = "#FF43BA" },  -- nil
-    ["@function.builtin"]    = { fg = "#A7C080" },  -- print
-    ["@type.definition"]     = { fg = "#9C8FDC" },  -- print
-    ["@string.escape"]       = { fg = "#FF43BA" },  -- \n
-    ["@keyword.return"]      = { fg = "#FF43BA" },  -- return
-    ["@keyword.function"]    = { fg = "#FF43BA" },  -- function end
-    ["@keyword.operator"]    = { fg = "#C53B82" },  -- and or not
+    ["@variable"]           = { fg = "#868686" },
+    ["@string"]             = { fg = "#585858" },
+    ["@keyword"]            = { fg = "#868686" },
+    ["@function"]           = { fg = "#9C8FDC" },
+    ["@parameter"]          = { fg = "#585858" },
+    ["@number"]             = { fg = "#787878" },
+    ["@constant"]           = { fg = "#FF43BA" },
+    ["@boolean"]            = { fg = "#FF43BA" },
+    ["@conditional"]        = { fg = "#9C8FDC" },
+    ["@repeat"]             = { fg = "#868686" },
+    ["@operator"]           = { fg = "#686868" },
+    ["@punctuation"]        = { fg = "#585858" },
+    ["@constructor"]        = { fg = "#AFC460" },
+    ["@field"]              = { fg = "#585858" },
+    ["@method"]             = { fg = "#9C8FDC" },
+    ["@comment"]            = { fg = "#484848" },
+    ["@type"]               = { fg = "#686868" },
+    ["@property"]           = { fg = "#9D7CD8" },
+    ["@include"]            = { fg = "#C3E88D" },
+    ["@text.todo"]          = { fg = "#C3E88D" },
+
+    ["@constant.builtin"]   = { fg = "#C53B82" },
+    ["@function.builtin"]   = { fg = "#A7C080" },
+    ["@type.definition"]    = { fg = "#9C8FDC" },
+    ["@string.escape"]      = { fg = "#484848" },
+    ["@keyword.function"]   = { fg = "#999999" },
+    ["@keyword.operator"]   = { fg = "#9C8FDC" },
+    ["@keyword.return"]     = { fg = "#9C8FDC", bold = true },
 }
 
--- for key, value in pairs(ts_tbl) do
---     api.nvim_set_hl(0, key, value)
--- end
+for key, value in pairs(ts_tbl) do
+    api.nvim_set_hl(0, key, value)
+end
