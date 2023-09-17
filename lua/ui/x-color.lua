@@ -53,9 +53,9 @@ local hl_tbl = {
 
     ActiveTabSepL     = { bg = "#060606", fg = "#222222" },
     ActiveTabSepR     = { bg = "#060606", fg = "#222222" },
-    ActiveTabName     = { fg = "#999999", bg = "#222222" },
-    ActiveTabFtIcon   = { fg = "#999999", bg = "#222222" },
-    ActiveTabClose    = { fg = "#999999", bg = "#222222" },
+    ActiveTabName     = { fg = "#666666", bg = "#222222" },
+    ActiveTabFtIcon   = { fg = "#9D7CD8", bg = "#222222" },
+    ActiveTabClose    = { fg = "#585858", bg = "#222222" },
     ActiveTabMod      = { fg = "#AFC460", bg = "#222222" },
 
     CmdLine         = { fg = "#FF9164", bg = "#282828" },
@@ -65,6 +65,57 @@ local hl_tbl = {
 for key, value in pairs(hl_tbl) do
     api.nvim_set_hl(0, key, value)
 end
+
+-- @text.literal      Comment
+-- @text.reference    Identifier
+-- @text.title        Title
+-- @text.uri          Underlined
+-- @text.underline    Underlined
+-- @text.todo         Todo
+-- 
+-- @comment           Comment
+-- @punctuation       Delimiter
+-- 
+-- @constant          Constant
+-- @constant.builtin  Special
+-- @constant.macro    Define
+-- @define            Define
+-- @macro             Macro
+-- @string            String
+-- @string.escape     SpecialChar
+-- @string.special    SpecialChar
+-- @character         Character
+-- @character.special SpecialChar
+-- @number            Number
+-- @boolean           Boolean
+-- @float             Float
+-- 
+-- @function          Function
+-- @function.builtin  Special
+-- @function.macro    Macro
+-- @parameter         Identifier
+-- @method            Function
+-- @field             Identifier
+-- @property          Identifier
+-- @constructor       Special
+-- 
+-- @conditional       Conditional
+-- @repeat            Repeat
+-- @label             Label
+-- @operator          Operator
+-- @keyword           Keyword
+-- @exception         Exception
+-- 
+-- @variable          Identifier
+-- @type              Type
+-- @type.definition   Typedef
+-- @storageclass      StorageClass
+-- @structure         Structure
+-- @namespace         Identifier
+-- @include           Include
+-- @preproc           PreProc
+-- @debug             Debug
+-- @tag               Tag
 
 local ts_tbl = {
     ["@variable"]           = { fg = "#868686" },
@@ -84,9 +135,8 @@ local ts_tbl = {
     ["@method"]             = { fg = "#9C8FDC" },
     ["@comment"]            = { fg = "#484848" },
     ["@type"]               = { fg = "#686868" },
-    ["@property"]           = { fg = "#9D7CD8" },
+    ["@property"]           = { fg = "#fe9b30" },
     ["@include"]            = { fg = "#C3E88D" },
-    ["@text.todo"]          = { fg = "#C3E88D" },
 
     ["@constant.builtin"]   = { fg = "#C53B82" },
     ["@function.builtin"]   = { fg = "#A7C080" },
