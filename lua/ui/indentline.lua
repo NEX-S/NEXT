@@ -34,7 +34,9 @@ local function line_render (row, str)
             virt_text = {
             { indent_str, "NonText" },
         },
-        virt_text_pos = 'overlay',
+        virt_text_pos = "overlay",
+        -- strict = false,
+        -- right_gravity = true,
     })
 end
 
@@ -105,3 +107,4 @@ local function select_indent ()
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
+-- longgggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelongggggggggggggggggggline

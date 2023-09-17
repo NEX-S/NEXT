@@ -42,7 +42,7 @@ local options = {
 
     history = 100,
 
-    shell = "/bin/sh",
+    shell = "/bin/bash",
 
     mouse = 'a',
 

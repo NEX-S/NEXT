@@ -1,15 +1,13 @@
 local api = vim.api
 
-local str_to_tbl = require "ui.messages".str_to_tbl
 local open_messages_win = require "ui.messages".open_messages_win
 
--- os.execute("mkdir /tmp/nvim-run-code/")
+os.execute("mkdir -p /tmp/nvim-run-code/")
 
 local function expand_cmd (str)
     local gsub_tbl = {
-        ["$FILENAME"] = vim.fn.expand("%:r"),
-        -- ["$FILEPATH"] = vim.fn.expand("%:p"),
-        ["$FILEPATH"] = api.nvim_buf_get_name(0),
+        ["%$FILENAME"] = vim.fn.expand("%:r"),
+        ["%$FILEPATH"] = api.nvim_buf_get_name(0),
     }
 
     for key, value in pairs(gsub_tbl) do
@@ -73,35 +71,36 @@ end
 
 local ft_cmd_tbl = {
     ["lua"] = function ()
-        local output = str_to_tbl(
-            api.nvim_exec2("source %", { output = true }).output
-        )
+        local output = api.nvim_exec2("source %", { output = true }).output
+
         if output ~= '' then
-            pcall(api.nvim_win_hide, cmdline_winid)
-            open_messages_win(output)
+            open_messages_win(output, false)
         end
     end,
     ["c"] = "gcc $FILEPATH -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
 }
 
 local function run_code ()
+    api.nvim_command("write ++p")
+
     local ft_cmd = ft_cmd_tbl[vim.bo.ft]
 
     if type(ft_cmd) == "function" then
         return ft_cmd()
     end
 
+    -- must before opening the window
+    local cmd = expand_cmd(ft_cmd)
+
     local run_code_bufnr = api.nvim_create_buf(false, true)
-    -- local run_code_winid = open_vert_win(run_code_bufnr)
-    local run_code_winid = open_float_win(run_code_bufnr)
+    local run_code_winid = open_vert_win(run_code_bufnr)
+    -- local run_code_winid = open_float_win(run_code_bufnr)
 
-    print(expand_cmd(ft_cmd))
-
-    vim.fn.termopen(expand_cmd(ft_cmd))
+    vim.fn.termopen(cmd)
 
     api.nvim_command("startinsert!")
 
-    api.nvim_buf_set_keymap(run_code_bufnr, 'n', '<ESC>', '', {
+    api.nvim_buf_set_keymap(run_code_bufnr, 't', '<ESC>', '', {
         callback = function ()
             api.nvim_win_hide(run_code_winid)
         end

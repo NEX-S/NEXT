@@ -2,7 +2,7 @@ local M = {}
 
 local api = vim.api
 
-function M.str_to_tbl (str)
+local function str_to_tbl (str)
     local res = {}
     for line in str:gmatch("[^\n]+") do
         table.insert(res, line)
@@ -14,12 +14,17 @@ local messages_winid = 0
 local messages_bufnr = api.nvim_create_buf(false, true)
 local is_open = false
 
-function M.open_messages_win (str)
-    -- replace all contents
-    -- api.nvim_buf_set_lines(messages_bufnr, 0, -1, false, str)
+function M.open_messages_win (str, append)
 
-    -- append contents
-    api.nvim_buf_set_lines(messages_bufnr, -1, -1, false, str)
+    local str_tbl = str_to_tbl(str)
+
+    if append == true then
+        table.insert(str_tbl, '')
+        table.insert(str_tbl, '')
+        api.nvim_buf_set_lines(messages_bufnr, -1, -1, false, str_tbl)
+    else
+        api.nvim_buf_set_lines(messages_bufnr, 0, -1, false, str_tbl)
+    end
 
     if is_open then
         return messages_winid
@@ -66,9 +71,7 @@ end
 
 api.nvim_create_user_command("M",
     function ()
-        local messages = M.str_to_tbl(
-            api.nvim_exec2("messages", { output = true }).output
-        )
+        local messages = api.nvim_exec2("messages", { output = true }).output
 
         if messages ~= '' then
             M.open_messages_win(messages)

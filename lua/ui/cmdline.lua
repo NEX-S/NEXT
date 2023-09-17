@@ -1,6 +1,13 @@
 local api = vim.api
-local str_to_tbl = require "ui.messages".str_to_tbl
 local open_messages_win = require "ui.messages".open_messages_win
+
+local function str_to_tbl (str)
+    local res = {}
+    for line in str:gmatch("[^\n]+") do
+        table.insert(res, line)
+    end
+    return res
+end
 
 _G.CMDLINE_OMNIFUNC = function (findstart, base)
     if findstart == 1 then
@@ -56,15 +63,9 @@ local function cmdline_init ()
         function (command)
             vim.fn.histadd("cmd", command)
 
-            local output = str_to_tbl(
-                api.nvim_exec2(command, { output = true }).output
-            )
+            local output = api.nvim_exec2(command, { output = true }).output
 
-            if output ~= '' then
-                pcall(api.nvim_win_hide, cmdline_winid)
-                table.insert(output, "")
-                open_messages_win(output)
-            end
+            open_messages_win(output, true)
         end
     )
 
