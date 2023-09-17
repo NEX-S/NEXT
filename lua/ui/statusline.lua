@@ -1,16 +1,7 @@
 local api = vim.api
 
--- test line 1
--- test line 2
--- test line 3
--- test line 4
--- test line 5
--- test line 6
--- test line 6
-
-local function git_diff_stats()
-
-    local bufname = vim.api.nvim_buf_get_name(0)
+local function git_diff_stats ()
+    local bufname = api.nvim_buf_get_name(0)
     local abs_bufname = vim.fn.fnamemodify(bufname, ':p')  -- 获取绝对路径
 
     local diff_output = vim.fn.systemlist('git diff --numstat ' .. abs_bufname)
@@ -39,7 +30,25 @@ local function git_diff_stats()
     return string.format("+%d -%d ~%d", added, deleted, modified)
 end
 
-print(git_diff_stats())
+local function git_diff()
+  local bufnr = api.nvim_get_current_buf()
+  local filename = api.nvim_buf_get_name(bufnr)
+  local diff = {}
+  local added, deleted, changed = 0, 0, 0
+  diff = vim.fn.system("git diff " .. filename)
+  for line in diff:gmatch("[^\r\n]+") do
+    if line:sub(1,1) == "+" then
+      added = added + 1
+    elseif line:sub(1,1) == "-" then
+      deleted = deleted + 1
+    elseif line:sub(1,1) == "~" then
+      changed = changed + 1
+    end
+  end
+  return "+" .. added .. " -" .. deleted .. " ~" .. changed
+end
+
+print(git_diff())
 
 local L_FT   = "%#StatusLineFT# %Y %#StatusLineFTSep#"
 local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit# GIT_STATUS %#StatusLineGitSepR#"
