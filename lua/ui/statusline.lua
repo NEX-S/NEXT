@@ -1,15 +1,14 @@
 local api = vim.api
 
-local function git_diff_stats ()
-    local bufname = api.nvim_buf_get_name(0)
-    local abs_bufname = vim.fn.fnamemodify(bufname, ':p')  -- 获取绝对路径
+local function git_diff_stats()
+    local abs_bufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':p')
 
     local diff_output = vim.fn.systemlist('git diff --numstat ' .. abs_bufname)
 
-    -- 获取Git仓库的顶级目录
-    local git_toplevel = vim.fn.system('git rev-parse --show-toplevel'):gsub('\n', '')
-
     local added, deleted, modified = 0, 0, 0
+
+    -- git_toplevel 是你的 Git 仓库的根目录路径
+    local git_toplevel = vim.fn.system('git rev-parse --show-toplevel'):gsub('\n', '')
 
     for _, line in ipairs(diff_output) do
         local a, d, f = line:match('(%d+)[\t%s]+(%d+)[\t%s]+(.+)')
@@ -20,36 +19,34 @@ local function git_diff_stats ()
         end
     end
 
-    -- 计算修改的行数
-    while added > 0 and deleted > 0 do
-        modified = modified + 1
-        added = added - 1
-        deleted = deleted - 1
-    end
+    -- 使用math.min来计算修改的行数
+    modified = math.min(added, deleted)
+    added = added - modified
+    deleted = deleted - modified
 
     return string.format("+%d -%d ~%d", added, deleted, modified)
 end
 
-local function git_diff()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filename = vim.api.nvim_buf_get_name(bufnr)
-  local diff = vim.fn.system("git diff " .. filename)
-  local added, deleted = 0, 0
+print(git_diff_stats())
 
-  for line in diff:gmatch("[^\r\n]+") do
-    local start_char = line:sub(1,1)
-    if start_char == "+" and line:sub(1,3) ~= "+++" then
-      added = added + 1
-    elseif start_char == "-" and line:sub(1,3) ~= "---" then
-      deleted = deleted + 1
-    end
-  end
-
-  local changed = math.min(added, deleted) -- assuming a change is counted as a line added and a line deleted
-  return "+" .. (added-changed) .. " -" .. (deleted-changed) .. " ~" .. changed
-end
-
-print(git_diff())
+-- local function git_diff ()
+--     local filename = api.nvim_buf_get_name(0)
+--     local diff = vim.fn.system("git diff " .. filename)
+--     local added, deleted = 0, 0
+-- 
+--     for line in diff:gmatch("[^\r\n]+") do
+--         local start_char = line:sub(1,1)
+--         if start_char == "+" and line:sub(1,3) ~= "+++" then
+--             added = added + 1
+--         elseif start_char == "-" and line:sub(1,3) ~= "---" then
+--             deleted = deleted + 1
+--         end
+--     end
+-- 
+--     local changed = math.min(added, deleted)
+-- 
+--     return "+" .. (added-changed) .. " -" .. (deleted-changed) .. " ~" .. changed
+-- end
 
 local L_FT   = "%#StatusLineFT# %Y %#StatusLineFTSep#"
 local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit# GIT_STATUS %#StatusLineGitSepR#"
