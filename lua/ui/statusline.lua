@@ -31,21 +31,22 @@ local function git_diff_stats ()
 end
 
 local function git_diff()
-  local bufnr = api.nvim_get_current_buf()
-  local filename = api.nvim_buf_get_name(bufnr)
-  local diff = {}
-  local added, deleted, changed = 0, 0, 0
-  diff = vim.fn.system("git diff " .. filename)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(bufnr)
+  local diff = vim.fn.system("git diff " .. filename)
+  local added, deleted = 0, 0
+
   for line in diff:gmatch("[^\r\n]+") do
-    if line:sub(1,1) == "+" then
+    local start_char = line:sub(1,1)
+    if start_char == "+" and line:sub(1,3) ~= "+++" then
       added = added + 1
-    elseif line:sub(1,1) == "-" then
+    elseif start_char == "-" and line:sub(1,3) ~= "---" then
       deleted = deleted + 1
-    elseif line:sub(1,1) == "~" then
-      changed = changed + 1
     end
   end
-  return "+" .. added .. " -" .. deleted .. " ~" .. changed
+
+  local changed = math.min(added, deleted) -- assuming a change is counted as a line added and a line deleted
+  return "+" .. (added-changed) .. " -" .. (deleted-changed) .. " ~" .. changed
 end
 
 print(git_diff())
