@@ -6,7 +6,7 @@ local api = vim.api
 -- test line 4
 -- test line 5
 -- test line 6
--- test line 7
+-- test line 6
 
 local function git_diff_stats()
 
@@ -26,8 +26,14 @@ local function git_diff_stats()
         if abs_f == abs_bufname then
             added = added + tonumber(a)
             deleted = deleted + tonumber(d)
-            modified = added + deleted
         end
+    end
+
+    -- 计算修改的行数
+    while added > 0 and deleted > 0 do
+        modified = modified + 1
+        added = added - 1
+        deleted = deleted - 1
     end
 
     return string.format("+%d -%d ~%d", added, deleted, modified)
