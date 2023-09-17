@@ -52,7 +52,7 @@ local function quick_switch ()
     if res then return "mss" .. res .. '<ESC>`s' end
 
     res = switch_tbl[vim.fn.expand("<cword>")]
-    if res then return "msciw" .. res .. "<ESC>`s" end
+    if res then return "ciw" .. res .. "<ESC>" end
 
     return ''
 end

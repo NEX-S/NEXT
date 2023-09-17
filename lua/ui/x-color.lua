@@ -22,10 +22,10 @@ local hl_tbl = {
     StatusLineGit     = { bg = "#303030", fg = "#888888" },
     StatusLineGitSepR = { bg = "#222222", fg = "#303030" },
 
-    StatusLinePathSepL = { bg = "#202020", fg = "#262626" },
-    StatusLinePATH     = { bg = "#262626", fg = "#404040" },
-    StatusLineMod      = { bg = "#262626", fg = "#AFC460" },
-    StatusLinePathSepR = { bg = "#202020", fg = "#262626" },
+    StatusLinePathSepL = { bg = "#202020", fg = "#202020" },
+    StatusLinePATH     = { bg = "#202020", fg = "#404040" },
+    StatusLineMod      = { bg = "#202020", fg = "#AFC460" },
+    StatusLinePathSepR = { bg = "#202020", fg = "#202020" },
 
     StatusLineRow     = { bg = "#9d7cd8", fg = "#000000" },
     StatusLineRowSep  = { fg = "#9d7cd8", bg = "#222222" },

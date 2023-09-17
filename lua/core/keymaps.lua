@@ -22,7 +22,6 @@ local n_mode = {
     ["y"] = '"yy',
     ["p"] = '"yp',
 
-    -- TODO:
     ["/"] = "<CMD>set hls!<CR>",
 
     -- ["<C-;>"] = "<CMD>set hls!<CR>",
@@ -60,18 +59,6 @@ local n_mode = {
 
 for key, value in pairs(n_mode) do
     api.nvim_set_keymap('n', key, value, { noremap = true })
-end 
-
-local i_mode = {
-    ["<C-h>"] = "<C-g>u<C-w>",
-    ["<C-l>"] = "<C-o>g+",
-
-    -- ["<LEFT>"] = "<C-g>u<C-w>",
-    -- ["<RIGHT>"] = "<C-o>u",
-}
-
-for key, value in pairs(i_mode) do
-    api.nvim_set_keymap('i', key, value, { noremap = true, silent = true })
 end 
 
 local x_mode = {
