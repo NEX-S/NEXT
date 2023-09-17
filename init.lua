@@ -1,6 +1,4 @@
 
-local s_time = os.clock()
-
 require "ft"
 require "ui"
 
@@ -13,5 +11,3 @@ vim.defer_fn(function ()
 
     require "modules"
 end, 20)
-
-print((os.clock() - s_time) * 1000)
