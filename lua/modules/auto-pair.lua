@@ -103,17 +103,17 @@ local special_keymap = {
         local cursor_l = cursor_line:sub(cursor_colm, cursor_colm)
         local cursor_r = cursor_line:sub(cursor_colm + 1, cursor_colm + 1)
 
+        local prev_char = cursor_line:sub(cursor_colm - 1, cursor_colm - 1)
+
         if quote_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) % 2 == 0
-            then return "<BS><DEL>"
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
         end
 
         if bracket_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) <= str_char_count(cursor_line, cursor_r)
-            then return "<BS><DEL>"
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
         end
-
-        local prev_char = cursor_line:sub(cursor_colm - 1, cursor_colm - 1)
 
         if prev_char:match("[%w_-#]") then
             return "<BS><C-x><C-z><C-x><C-p>"

@@ -1,5 +1,7 @@
 local api = vim.api
 
+-- TODO: shiftwidth
+
 local namespace_id = api.nvim_create_namespace("indnetlines")
 
 -- seems dont need to render all buffer
@@ -107,4 +109,3 @@ local function select_indent ()
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
--- longgggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelonggggggggggggggggggglinelongggggggggggggggggggline
