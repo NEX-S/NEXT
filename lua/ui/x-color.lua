@@ -20,7 +20,7 @@ local hl_tbl = {
     StatusLineFTSep     = { bg = "#222222", fg = "#fe9b30" },
 
     StatusLineGitSepL   = { bg = "#222222", fg = "#303030" },
-    StatusLineGit       = { bg = "#222222", fg = "#888888" },
+    StatusLineGit       = { bg = "#303030", fg = "#9D7CD8" },
     StatusLineGitAdd    = { bg = "#303030", fg = "#AFC460" },
     StatusLineGitRemove = { bg = "#303030", fg = "#C53B82" },
     StatusLineGitChange = { bg = "#303030", fg = "#fe9b30" },
