@@ -23,27 +23,23 @@ local function parse_diff_output (diff_output)
 end
 
 local function func ()
-    -- local buf_content = table.concat(
-    --     api.nvim_buf_get_lines(api.nvim_get_current_buf(), 0, -1, false), '\n'
-    -- ):sub(0, -1)
-
     api.nvim_command("messages clear")
 
     local buf_id = api.nvim_get_current_buf()
     local buf_content = table.concat(
         api.nvim_buf_get_lines(buf_id, 0, -1, false), '\n'
-    ):sub(-2, -1)
+    )
 
     local git_content = vim.fn.system("git show HEAD:./" .. vim.fn.expand("%:t") .. " 2> /dev/null")
 
-    local diff_output = vim.diff(buf_content, git_content, {})
+    local diff_output = vim.diff(git_content, buf_content .. '\n', {})
 
     print(diff_output)
 
     local diff_result = parse_diff_output(diff_output)
 end
 
-api.nvim_create_autocmd({ "TextChanged", "BufWinEnter", "CursorMoved" }, {
+api.nvim_create_autocmd({ "CursorMoved" }, {
     callback = func
 })
 
