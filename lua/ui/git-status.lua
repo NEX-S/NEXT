@@ -12,12 +12,51 @@ function M.get_git_branch ()
     return git_branch == '' and "UNKNOWN" or git_branch
 end
 
+-- GPT4
 local function parse_diff_output (diff_output)
-    local diff_result = {
-        add = {},
-        del = {},
-        mod = {},
-    }
+    local diff_result = { add = {}, mod = {}, del = {} }
+    
+    local function split_str(inputstr, sep)
+        if sep == nil then
+            sep = "%s"
+        end
+        local t = {}
+        for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+            table.insert(t, str)
+        end
+        return t
+    end
+
+    for diff_line in string.gmatch(diff_str, "(@@%s-[^@]+@@)") do
+        local header = string.match(diff_line, "@@%s-(.-)%s-@@")
+        local parts = split_str(header, ",?")
+        local old_start, old_len, new_start, new_len = 
+            tonumber(parts[1]), tonumber(parts[2] or 1), 
+            tonumber(parts[4]), tonumber(parts[5] or 1)
+        
+        local diff_content = string.match(diff_line, "@@%s-.-%s-@@%s(.+)")
+        if not diff_content then
+            diff_content = ""
+        end
+        
+        if old_len == 0 then
+            for i = 1, new_len do
+                table.insert(diff_result.add, new_start + i - 1)
+            end
+        elseif new_len == 0 then
+            table.insert(diff_result.del, old_start)
+        else
+            local added = 0
+            for content_line in string.gmatch(diff_content, "(.-)\n") do
+                if string.sub(content_line, 1, 1) == "+" then
+                    added = added + 1
+                    table.insert(diff_result.add, new_start + added - 1)
+                elseif string.sub(content_line, 1, 1) == "-" then
+                    table.insert(diff_result.mod, old_start + added)
+                end
+            end
+        end
+    end
 
     return diff_result
 end
@@ -36,7 +75,7 @@ local function func ()
 
     print(diff_output)
 
-    local diff_result = parse_diff_output(diff_output)
+    -- local diff_result = parse_diff_output(diff_output)
 end
 
 api.nvim_create_autocmd({ "CursorMoved" }, {
