@@ -19,8 +19,6 @@ local function parse_diff_output (diff_output)
         mod = {},
     }
 
-
-
     return diff_result
 end
 
@@ -34,16 +32,18 @@ local function func ()
     local buf_id = api.nvim_get_current_buf()
     local buf_content = table.concat(
         api.nvim_buf_get_lines(buf_id, 0, -1, false), '\n'
-    )
+    ):sub(-2, -1)
 
     local git_content = vim.fn.system("git show HEAD:./" .. vim.fn.expand("%:t") .. " 2> /dev/null")
 
     local diff_output = vim.diff(buf_content, git_content, {})
 
+    print(diff_output)
+
     local diff_result = parse_diff_output(diff_output)
 end
 
-api.nvim_create_autocmd({ "TextChanged", "BufWinEnter" }, {
+api.nvim_create_autocmd({ "TextChanged", "BufWinEnter", "CursorMoved" }, {
     callback = func
 })
 
