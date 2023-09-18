@@ -107,12 +107,18 @@ local function get_diff_info ()
     return parse_diff_str(diff_res)
 end
 
+vim.fn.sign_define("GitAdd",     { text = '┃', texthl = "GitAdd" })
+vim.fn.sign_define("GitChange",  { text = '┃', texthl = "GitChange" })
+vim.fn.sign_define("GitDelete",  { text = '', texthl = "GitDelete" })
+vim.fn.sign_define("GitUnstage", { text = '┃', texthl = "GitUnstage" })
+
 api.nvim_set_keymap('n', ',f', '', {
     callback = function ()
         api.nvim_command("messages clear")
+        local bufnr = api.nvim_get_current_buf()
         local add_tbl = get_diff_info().add
         for _, add_row in ipairs(add_tbl) do
-            print(add_row)
+            vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = add_row })
         end
     end
 })
