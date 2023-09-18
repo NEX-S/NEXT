@@ -7,12 +7,6 @@ local str = [[
     this is line 7
     this is line 8
     this is line 9
-    this is line 10
-    this is line 11
-    this is line 12
-    this is line 13
-    this is line 14
-    this is line 15
     this is line 16
     this is line 17
     this is line 18

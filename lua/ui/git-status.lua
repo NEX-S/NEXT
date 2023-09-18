@@ -70,10 +70,15 @@ local function str_to_tbl (str)
     return res
 end
 
-local function parse_diff_str (diff_output)
-    local result = {}
+local function parse_diff_str (vim_diff_output)
+    local result = {
+        add = {},
+        del = {},
+        mod = {},
+    }
+
     local line_number = 0
-    local lines = vim.split(diff_output, '\n')
+    local lines = vim.split(vim_diff_output, '\n')
     for _, line in ipairs(lines) do
         if line:sub(1, 2) == "@@" then
             local parts = vim.split(line, ' ')
@@ -82,20 +87,38 @@ local function parse_diff_str (diff_output)
             local old_start = tonumber(old_parts[1]:sub(2))
             line_number = old_start
         elseif line:sub(1, 1) == '+' then
-            table.insert(result, line_number + 1)
+            table.insert(result.add, line_number + 1)
             line_number = line_number + 1
         end
     end
+
+    for _, line in ipairs(lines) do
+        if line:sub(1, 2) == "@@" then
+            local parts = vim.split(line, ' ')
+            local old_range = parts[2]
+            local old_parts = vim.split(old_range, ',')
+            local old_start = tonumber(old_parts[1]:sub(2))
+            line_number = old_start
+        elseif line:sub(1, 1) == '-' then
+            table.insert(result.del, line_number)
+            break
+            -- line_number = line_number + 1
+        end
+    end
+
     return result
 end
 
 local function get_diff_info ()
-    local buf_file = api.nvim_buf_get_name(0)
+    -- local buf_file = api.nvim_buf_get_name(0)
+
     local buf_path = vim.fn.system("git rev-parse --show-prefix"):gsub("\n", '') .. vim.fn.expand("%:t")
     local buf_content = table.concat(api.nvim_buf_get_lines(0, 0, -1, false), '\n') .. '\n'
     local git_content = vim.fn.system("git show HEAD:" .. buf_path)
 
-    local diff_res = vim.diff(buf_content, git_content, {})
+    local diff_res = vim.diff(git_content, buf_content, {})
+
+    print(diff_res)
 
     return parse_diff_str(diff_res)
 end
