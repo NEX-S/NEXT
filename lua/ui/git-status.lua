@@ -1,5 +1,7 @@
 local api = vim.api
 
+local messages = require "ui.messages"
+
 -- local function get_git_status ()
 --     local filename = api.nvim_buf_get_name(0)
 --     local lines = api.nvim_buf_get_lines(0, 0, -1, false)
@@ -52,68 +54,13 @@ function M.get_git_branch ()
     local git_branch = "UNKNOWN"
 
     local is_inside_git_repo = vim.fn.system("git -C " .. vim.fn.escape(dir, ' ') .. " rev-parse --is-inside-work-tree"):gsub("\n", "")
-    
+
     if is_inside_git_repo == "true" then
         git_branch = vim.fn.system("git -C " .. vim.fn.escape(dir, ' ') .. " rev-parse --abbrev-ref HEAD"):gsub("\n", "")
     end
 
     return git_branch
 end
-
--- local function get_git_buffer_status ()
---     local filename = vim.api.nvim_buf_get_name(0)
---     local diff_output = vim.fn.systemlist("git diff -U0 -- " .. filename)
--- 
---     local status = {
---         add_row = {},
---         del_row = {},
---         change_row = {}
---     }
--- 
---     local del_start, del_count, add_start, add_count
---     for _, line in ipairs(diff_output) do
---         if line:match("^@@") then
---             del_start, del_count, add_start, add_count = 
---                 line:match("@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@")
---             del_start = tonumber(del_start)
---             del_count = tonumber(del_count) or 1
---             add_start = tonumber(add_start)
---             add_count = tonumber(add_count) or 1
--- 
---             -- If both lines are deleted and added, it's a change
---             if del_count > 0 and add_count > 0 then
---                 local change_count = math.min(del_count, add_count)
---                 for i = 0, change_count - 1 do
---                     table.insert(status.change_row, add_start + i)
---                 end
---                 if add_count > change_count then
---                     for i = change_count, add_count - 1 do
---                         table.insert(status.add_row, add_start + i)
---                     end
---                 end
---                 if del_count > change_count then
---                     table.insert(status.del_row, del_start)
---                 end
---             elseif del_count > 0 then
---                 table.insert(status.del_row, del_start)
---             elseif add_count > 0 then
---                 for i = 0, add_count - 1 do
---                     table.insert(status.add_row, add_start + i)
---                 end
---             end
---         end
---     end
--- 
---     return status
--- end
--- 
--- api.nvim_set_keymap('n', ',f', '', {
---     callback = function ()
---         api.nvim_command("messages clear")
---         local status = get_git_buffer_status()
---         print(vim.inspect(status))
---     end
--- })
 
 local function str_to_tbl (str)
     local res = {}
@@ -123,38 +70,41 @@ local function str_to_tbl (str)
     return res
 end
 
-local function parse_diff_str(diff_str)
-    local diff_res = {
-        del = {},
-        add = {},
-        chg = {}
-    }
-
-    local diff_tbl = str_to_tbl(diff_str)
-    local current_line, next_line, is_change, change_counter = nil, nil, false, 0
-    for _, line in ipairs(diff_tbl) do
+local function parse_diff_str (diff_output)
+    local result = {}
+    local line_number = 0
+    local lines = vim.split(diff_output, '\n')
+    for _, line in ipairs(lines) do
+        if line:sub(1, 2) == "@@" then
+            local parts = vim.split(line, ' ')
+            local old_range = parts[2]
+            local old_parts = vim.split(old_range, ',')
+            local old_start = tonumber(old_parts[1]:sub(2))
+            line_number = old_start
+        elseif line:sub(1, 1) == '+' then
+            table.insert(result, line_number + 1)
+            line_number = line_number + 1
+        end
     end
-
-    return diff_res
+    return result
 end
 
-local function get_git_diff_status()
+local function get_diff_info ()
     local buf_file = api.nvim_buf_get_name(0)
     local buf_path = vim.fn.system("git rev-parse --show-prefix"):gsub("\n", '') .. vim.fn.expand("%:t")
-    local lines = api.nvim_buf_get_lines(0, 0, -1, false)
-    local buf_content = table.concat(lines, '\n') .. '\n'
+    local buf_content = table.concat(api.nvim_buf_get_lines(0, 0, -1, false), '\n') .. '\n'
     local git_content = vim.fn.system("git show HEAD:" .. buf_path)
 
-    local diff_str = vim.diff(buf_content, git_content, {})
-    print(diff_str)
+    local diff_res = vim.diff(buf_content, git_content, {})
 
-    return parse_diff_str(diff_str)
+    return parse_diff_str(diff_res)
 end
 
 api.nvim_set_keymap('n', ',f', '', {
     callback = function ()
         api.nvim_command("messages clear")
-        print(vim.inspect(get_git_diff_status()))
+        local add_tbl = get_diff_info()
+        print(vim.inspect(add_tbl))
     end
 })
 
