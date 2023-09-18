@@ -92,20 +92,6 @@ local function parse_diff_str (vim_diff_output)
         end
     end
 
-    for _, line in ipairs(lines) do
-        if line:sub(1, 2) == "@@" then
-            local parts = vim.split(line, ' ')
-            local old_range = parts[2]
-            local old_parts = vim.split(old_range, ',')
-            local old_start = tonumber(old_parts[1]:sub(2))
-            line_number = old_start
-        elseif line:sub(1, 1) == '-' then
-            table.insert(result.del, line_number)
-            break
-            -- line_number = line_number + 1
-        end
-    end
-
     return result
 end
 
@@ -118,16 +104,16 @@ local function get_diff_info ()
 
     local diff_res = vim.diff(git_content, buf_content, {})
 
-    print(diff_res)
-
     return parse_diff_str(diff_res)
 end
 
 api.nvim_set_keymap('n', ',f', '', {
     callback = function ()
         api.nvim_command("messages clear")
-        local add_tbl = get_diff_info()
-        print(vim.inspect(add_tbl))
+        local add_tbl = get_diff_info().add
+        for _, add_row in ipairs(add_tbl) do
+            print(add_row)
+        end
     end
 })
 
