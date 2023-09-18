@@ -64,7 +64,7 @@ local function get_git_buffer_status ()
     local filename = vim.api.nvim_buf_get_name(0)
 
     local diff_output = vim.fn.systemlist("git diff -U0 -- " .. filename)
-    
+
     local status = {
         add_row = {},
         del_row = {},
@@ -76,11 +76,11 @@ local function get_git_buffer_status ()
         if line:match("^@@") then
             local _, del_start, del_count, add_start, add_count = 
                 line:match("@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@")
-            
+
             del_start = tonumber(del_start)
-            del_count = tonumber(del_count) > 0 and tonumber(del_count) or 1
+            del_count = tonumber(del_count) or 1
             add_start = tonumber(add_start)
-            add_count = tonumber(add_count) > 0 and tonumber(add_count) or 1
+            add_count = tonumber(add_count) or 1
 
             if del_count > 0 and add_count > 0 then
                 table.insert(status.change_row, add_start)
@@ -94,7 +94,7 @@ local function get_git_buffer_status ()
             end
 
             current_line = add_start
-        elseif line:match("^%+") then
+        elseif current_line and line:match("^%+") then
             table.insert(status.add_row, current_line)
             current_line = current_line + 1
         end
@@ -103,6 +103,7 @@ local function get_git_buffer_status ()
     return status
 end
 
+api.nvim_command("messages clear")
 local status = get_git_buffer_status()
 print(vim.inspect(status))
 

@@ -65,7 +65,7 @@ local function cmdline_init ()
 
             local output = api.nvim_exec2(command, { output = true }).output
 
-            open_messages_win(output, true)
+            open_messages_win(output)
         end
     )
 

@@ -74,7 +74,7 @@ local ft_cmd_tbl = {
         local output = api.nvim_exec2("source %", { output = true }).output
 
         if output ~= '' then
-            open_messages_win(output, false)
+            open_messages_win(output)
         end
     end,
     ["c"] = "gcc $FILEPATH -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",

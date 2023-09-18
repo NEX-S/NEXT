@@ -13,12 +13,11 @@ end
 local messages_winid = 0
 local messages_bufnr = api.nvim_create_buf(false, true)
 local is_open = false
-
-function M.open_messages_win (str, append)
+function M.open_messages_win (str)
 
     local str_tbl = str_to_tbl(str)
 
-    if append == true then
+    if is_open == true then
         table.insert(str_tbl, '')
         table.insert(str_tbl, '')
         api.nvim_buf_set_lines(messages_bufnr, -1, -1, false, str_tbl)
