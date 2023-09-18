@@ -2,6 +2,53 @@ local api = vim.api
 
 local messages = require "ui.messages"
 
+local M = {}
+
+function M.get_git_branch ()
+    local dir = vim.fn.expand("%:h")
+
+    local git_branch = vim.fn.system("git branch --show-current 2> /dev/null"):gsub("\n", '')
+
+    return git_branch == '' and "UNKNOWN" or git_branch
+end
+
+local function parse_diff_output (diff_output)
+    local diff_result = {
+        add = {},
+        del = {},
+        mod = {},
+    }
+
+
+
+    return diff_result
+end
+
+local function func ()
+    -- local buf_content = table.concat(
+    --     api.nvim_buf_get_lines(api.nvim_get_current_buf(), 0, -1, false), '\n'
+    -- ):sub(0, -1)
+
+    api.nvim_command("messages clear")
+
+    local buf_id = api.nvim_get_current_buf()
+    local buf_content = table.concat(
+        api.nvim_buf_get_lines(buf_id, 0, -1, false), '\n'
+    )
+
+    local git_content = vim.fn.system("git show HEAD:./" .. vim.fn.expand("%:t") .. " 2> /dev/null")
+
+    local diff_output = vim.diff(buf_content, git_content, {})
+
+    local diff_result = parse_diff_output(diff_output)
+end
+
+api.nvim_create_autocmd({ "TextChanged", "BufWinEnter" }, {
+    callback = func
+})
+
+return M
+
 -- local function get_git_status ()
 --     local filename = api.nvim_buf_get_name(0)
 --     local lines = api.nvim_buf_get_lines(0, 0, -1, false)
@@ -45,82 +92,3 @@ local messages = require "ui.messages"
 -- 
 --     return git_status_str
 -- end
-
-local M = {}
-
-function M.get_git_branch ()
-    local dir = vim.fn.expand("%:h")
-
-    local git_branch = "UNKNOWN"
-
-    local is_inside_git_repo = vim.fn.system("git -C " .. vim.fn.escape(dir, ' ') .. " rev-parse --is-inside-work-tree"):gsub("\n", "")
-
-    if is_inside_git_repo == "true" then
-        git_branch = vim.fn.system("git -C " .. vim.fn.escape(dir, ' ') .. " rev-parse --abbrev-ref HEAD"):gsub("\n", "")
-    end
-
-    return git_branch
-end
-
-local function str_to_tbl (str)
-    local res = {}
-    for line in str:gmatch("[^\n]+") do
-        table.insert(res, line)
-    end
-    return res
-end
-
-local function parse_diff_str (vim_diff_output)
-    local result = {
-        add = {},
-        del = {},
-        mod = {},
-    }
-
-    local line_number = 0
-    local lines = vim.split(vim_diff_output, '\n')
-    for _, line in ipairs(lines) do
-        if line:sub(1, 2) == "@@" then
-            local parts = vim.split(line, ' ')
-            local old_range = parts[2]
-            local old_parts = vim.split(old_range, ',')
-            local old_start = tonumber(old_parts[1]:sub(2))
-            line_number = old_start
-        elseif line:sub(1, 1) == '+' then
-            table.insert(result.add, line_number + 1)
-            line_number = line_number + 1
-        end
-    end
-
-    return result
-end
-
-local function get_diff_info ()
-    -- local buf_file = api.nvim_buf_get_name(0)
-
-    local buf_path = vim.fn.system("git rev-parse --show-prefix"):gsub("\n", '') .. vim.fn.expand("%:t")
-    local buf_content = table.concat(api.nvim_buf_get_lines(0, 0, -1, false), '\n') .. '\n'
-    local git_content = vim.fn.system("git show HEAD:" .. buf_path)
-
-    local diff_res = vim.diff(git_content, buf_content, {})
-
-    return parse_diff_str(diff_res)
-end
-
-vim.fn.sign_define("GitAdd",     { text = '┃', texthl = "GitAdd" })
-vim.fn.sign_define("GitChange",  { text = '┃', texthl = "GitChange" })
-vim.fn.sign_define("GitDelete",  { text = '', texthl = "GitDelete" })
-vim.fn.sign_define("GitUnstage", { text = '┃', texthl = "GitUnstage" })
-
-api.nvim_set_keymap('n', ',f', '', {
-    callback = function ()
-        api.nvim_command("messages clear")
-        local bufnr = api.nvim_get_current_buf()
-        local add_tbl = get_diff_info().add
-        for _, add_row in ipairs(add_tbl) do
-            vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = add_row })
-        end
-    end
-})
-
-return M
