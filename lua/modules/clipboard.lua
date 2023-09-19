@@ -8,7 +8,7 @@ api.nvim_create_autocmd({ "FocusLost" }, {
     command = "let @+=@y"
 })
 
-api.nvim_create_autocmd({ "QuitPre" }, {
+api.nvim_create_autocmd({ "ExitPre" }, {
     callback = function ()
         api.nvim_command("let @+=@y")
         os.exit()

@@ -5,9 +5,17 @@ local M = {}
 function M.get_git_branch ()
     local dir = vim.fn.expand("%:h")
 
-    local git_branch = vim.fn.system("git branch --show-current 2> /dev/null"):gsub("\n", '')
+    local io_handle = io.popen("git branch --show-current", 'r')
 
-    return git_branch == '' and "UNKNOWN" or git_branch
+    if io_handle == nil then
+        return "UNKNOWN"
+    end
+
+    local git_branch = io_handle:read()
+
+    io_handle:close()
+
+    return git_branch
 end
 
 local function str_to_tbl (str)
@@ -22,7 +30,6 @@ vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
 vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
 vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
 
--- TODO: only render window?
 local function parse_diff_output (diff_output)
     local diff_result = {
         add = {},
@@ -67,10 +74,9 @@ local function parse_diff_output (diff_output)
     return diff_result
 end
 
-local function set_diff_sign (diff_result)
+local function set_diff_sign (diff_result, bufnr)
     vim.fn.sign_unplace("GitSigns")
 
-    local bufnr = api.nvim_get_current_buf()
     for _, linenr in ipairs(diff_result.add) do
         vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = linenr })
     end
@@ -82,23 +88,60 @@ local function set_diff_sign (diff_result)
     end
 end
 
-local function diff_buf ()
-    local buf_id = api.nvim_get_current_buf()
-    local buf_content = table.concat(
-        api.nvim_buf_get_lines(buf_id, 0, -1, false), '\n'
+local function get_buf_content (bufnr)
+    return table.concat(
+        vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n'
     )
-
-    local git_content = vim.fn.system("git show HEAD:./" .. vim.fn.expand("%:t") .. " 2> /dev/null")
-
-    local diff_output = vim.diff(git_content, buf_content .. '\n', {})
-
-    local diff_result = parse_diff_output(diff_output)
-
-    set_diff_sign(diff_result)
 end
 
-api.nvim_create_autocmd({ "TextChanged", "BufWinEnter" }, {
-    callback = diff_buf
+local git_content = ""
+local function diff_buf ()
+    local bufnr = api.nvim_get_current_buf()
+    local buf_content = get_buf_content(bufnr)
+
+    local diff_output = vim.diff(git_content, buf_content, {})
+    local diff_result = parse_diff_output(diff_output)
+    set_diff_sign(diff_result, bufnr)
+end
+
+local function get_git_content (callback)
+    local stdout = vim.loop.new_pipe(false)
+    local handle = nil
+    handle = vim.loop.spawn("git",
+        {
+            args =  { "show", "HEAD:./" .. vim.fn.expand("%:t") },
+            stdio = { nil, stdout, nil }
+        },
+        function (code)
+            stdout:read_stop()
+            stdout:close()
+            handle:close()
+        end
+    )
+
+    stdout:read_start(
+        function(err, data)
+            git_content = data ~= nil and data or ""
+            vim.schedule_wrap(callback)()
+        end
+    )
+end
+
+api.nvim_create_autocmd("BufWinEnter", {
+    callback = function ()
+        if M.get_git_branch() == "UNKNOWN" then
+            return
+        end
+        local bufnr = api.nvim_get_current_buf()
+        local buf_content = get_buf_content(bufnr)
+        get_git_content(function ()
+            local diff_output = vim.diff(git_content, buf_content, {})
+            local diff_result = parse_diff_output(diff_output)
+            set_diff_sign(diff_result, bufnr)
+        end)
+    end
 })
+
+api.nvim_create_autocmd("TextChanged", { callback = diff_buf })
 
 return M

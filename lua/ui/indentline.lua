@@ -82,24 +82,44 @@ local function select_indent ()
     local s_row = api.nvim_win_get_cursor(0)[1]
     local e_row = s_row
 
-    for i = s_row - 1, 1, -1 do
-        local line_str = buf_line_tbl[i]
-        if not line_str:match("^%s*$") then
-            if line_str:find("%S") - 1 >= cursor_indent then
+    if cursor_indent == 0 then
+        for i = s_row - 1, 1, -1 do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
                 s_row = i
             else
                 break
             end
         end
-    end
 
-    for i = e_row + 1, api.nvim_buf_line_count(0) do
-        local line_str = buf_line_tbl[i]
-        if not line_str:match("^%s*$") then
-            if line_str:find("%S") - 1 >= cursor_indent then
+        for i = e_row + 1, api.nvim_buf_line_count(0) do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
                 e_row = i
             else
                 break
+            end
+        end
+    else
+        for i = s_row - 1, 1, -1 do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
+                if line_str:find("%S") - 1 >= cursor_indent then
+                    s_row = i
+                else
+                    break
+                end
+            end
+        end
+
+        for i = e_row + 1, api.nvim_buf_line_count(0) do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
+                if line_str:find("%S") - 1 >= cursor_indent then
+                    e_row = i
+                else
+                    break
+                end
             end
         end
     end
@@ -109,3 +129,4 @@ local function select_indent ()
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
+
