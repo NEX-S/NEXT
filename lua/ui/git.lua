@@ -81,7 +81,26 @@ local function get_git_content ()
 end
 
 local git_content_cache = ""
--- AUTOCMD EVENTS : DirChanged
+
+-- TODO:
+api.nvim_create_autocmd("DirChanged", {
+    callback = function ()
+        -- ...
+    end
+})
+
+api.nvim_set_keymap('n', ',f', '', {
+    callback = function ()
+        local git_path = vim.fn.system("git rev-parse --git-dir")
+        local file_path = api.nvim_buf_get_name(0)
+
+        print(git_path)
+        print(file_path)
+        
+        -- print(file_path:sub(#git_path - 1))
+    end
+})
+
 api.nvim_create_autocmd("BufWinEnter", {
     callback = function ()
         if M.get_git_branch() == "UNKNOWN" then
