@@ -1,5 +1,4 @@
 local api = vim.api
-local open_messages_win = require "ui.messages".open_messages_win
 
 local function str_to_tbl (str)
     local res = {}
@@ -7,6 +6,59 @@ local function str_to_tbl (str)
         table.insert(res, line)
     end
     return res
+end
+
+local M = {}
+local messages_winid = 0
+local messages_bufnr = api.nvim_create_buf(false, true)
+local is_open = false
+function M.open_messages_win (str)
+
+    local str_tbl = str_to_tbl(str)
+
+    if is_open == true then
+        table.insert(str_tbl, '')
+        table.insert(str_tbl, '')
+        api.nvim_buf_set_lines(messages_bufnr, -1, -1, false, str_tbl)
+    else
+        api.nvim_buf_set_lines(messages_bufnr, 0, -1, false, str_tbl)
+    end
+
+    if is_open then
+        return messages_winid
+    end
+
+    local win_config = {
+        relative  = "editor",
+        row       = 1,
+        col       = vim.o.columns,
+        height    = vim.o.lines - 2,
+        width     = math.floor(vim.o.columns * 0.3),
+        style     = "minimal",
+        focusable = true,
+        noautocmd = true,
+    }
+
+    pcall(api.nvim_win_hide, messages_winid)
+
+    messages_winid = api.nvim_open_win(messages_bufnr, false, win_config)
+
+    is_open = true
+
+    api.nvim_win_set_option(messages_winid, "winhl", "Normal:MessagesWin")
+    api.nvim_win_set_option(messages_winid, "winblend", 15)
+
+    api.nvim_set_option_value("wrap", true, { win = messages_winid })
+
+    api.nvim_set_keymap('n', '<ESC>', '', {
+        callback = function ()
+            is_open = false
+            pcall(api.nvim_win_hide, messages_winid)
+            api.nvim_set_keymap('n', '<ESC>', ',', { noremap = true })
+        end
+    })
+
+    return messages_winid
 end
 
 _G.CMDLINE_OMNIFUNC = function (findstart, base)
@@ -65,7 +117,7 @@ local function cmdline_init ()
 
             local output = api.nvim_exec2(command, { output = true }).output
 
-            open_messages_win(output)
+            M.open_messages_win(output)
         end
     )
 
@@ -132,3 +184,15 @@ api.nvim_create_autocmd("ExitPre", {
         api.nvim_buf_delete(cmdline_bufnr, { force = true })
     end
 })
+
+api.nvim_create_user_command("M",
+    function ()
+        local messages = api.nvim_exec2("messages", { output = true }).output
+
+        if messages ~= '' then
+            M.open_messages_win(messages)
+        end
+    end, {}
+)
+
+return M

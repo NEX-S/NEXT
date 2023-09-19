@@ -56,7 +56,6 @@ for key, value in pairs(ui_options) do
     api.nvim_set_option_value(key, value, {})
 end
 
-require "ui.messages"
 require "ui.x-color"
 require "ui.tabline"
 require "ui.statusline"

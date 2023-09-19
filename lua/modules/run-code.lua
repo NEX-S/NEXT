@@ -1,6 +1,6 @@
 local api = vim.api
 
-local open_messages_win = require "ui.messages".open_messages_win
+local open_messages_win = require "ui.cmdline".open_messages_win
 
 os.execute("mkdir -p /tmp/nvim-run-code/")
 
