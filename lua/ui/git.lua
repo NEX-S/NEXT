@@ -39,6 +39,11 @@ local function parse_diff_output (diff_output)
 
     diff_output = str_to_tbl(diff_output)
 
+
+    -- @@ -9,0 +10 @@
+    -- +    this is line 9
+    -- add = { 10 }
+
     local check_line = false
     local x1, y1, x2, y2 = 0, 0, 0, 0
     for _, diff_str in ipairs(diff_output) do
@@ -47,8 +52,8 @@ local function parse_diff_output (diff_output)
             x1 = tonumber(x1)
             x2 = tonumber(x2)
 
-            y1 = y1 == '' and 0 or tonumber(y1)
-            y2 = y2 == '' and 0 or tonumber(y2)
+            y1 = y1 == '' and 1 or tonumber(y1)
+            y2 = y2 == '' and 2 or tonumber(y2)
             check_line = true
         end
 
