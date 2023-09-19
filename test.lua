@@ -38,4 +38,9 @@ local str = [[
     this is line 38
     this is line 39
     this is line 40
+    this is line 40
+    this is line 40
+    this is line 40
+    this is line 40
+    this is line 40
 ]]
