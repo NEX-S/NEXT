@@ -15,6 +15,10 @@ local hl_tbl = {
     PmenuSel     =  { bg = "#424242" },
     PmenuSbar    =  { bg = "#383838" },
 
+    GitAdd       = { fg = "#AFC460" },
+    GitMod       = { fg = "#fe9b30" },
+    GitDel       = { fg = "#C53B82" },
+
     -- statusline
     StatusLineFT        = { bg = "#fe9b30", fg = "#101010" },
     StatusLineFTSep     = { bg = "#222222", fg = "#fe9b30" },

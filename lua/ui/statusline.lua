@@ -1,6 +1,6 @@
 local api = vim.api
 
-local git = require "ui.git-status"
+local git = require "ui.git"
 
 -- FT_ICON
 ------------------------------------------
