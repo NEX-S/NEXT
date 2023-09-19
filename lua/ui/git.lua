@@ -39,8 +39,7 @@ local function parse_diff_output (diff_output)
                 for i = 1, y2 do
                     table.insert(diff_result.add, x2 + i - 1)
                 end
-            -- elseif prefix == '-' then
-            elseif y1 == y2 then
+            elseif prefix == '-' and y1 == y2 then
                 for i = 0, y2 - 1 do
                     table.insert(diff_result.mod, x2 + i)
                 end
@@ -67,23 +66,23 @@ local function parse_diff_output (diff_output)
         -- 
         --     y1 = y1 == '' and 1 or tonumber(y1)
         --     y2 = y2 == '' and 1 or tonumber(y2)
-        --     check_prefix = true
+        --     check_next_prefix = true
         -- end
         -- 
-        -- if check_prefix then
+        -- if check_next_prefix then
         --     if diff_str:match("^%+") then
         --         for i = 1, y2 do
         --             table.insert(diff_result.add, x2 + i - 1)
         --         end
-        --         check_prefix = false
+        --         check_next_prefix = false
         --     elseif diff_str:match("^-") and y1 == y2 then
         --         for i = 0, y2 - 1 do
         --             table.insert(diff_result.mod, x2 + i)
         --         end
-        --         check_prefix = false
+        --         check_next_prefix = false
         --     elseif diff_str:match("^-") then
         --         table.insert(diff_result.del, x2 + 1)
-        --         check_prefix = false
+        --         check_next_prefix = false
         --     end
         -- end
     end
