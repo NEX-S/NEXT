@@ -1,5 +1,9 @@
 local api = vim.api
 
+vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
+vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
+vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
+
 local M = {}
 
 function M.get_git_branch ()
@@ -18,18 +22,6 @@ function M.get_git_branch ()
     return git_branch
 end
 
-local function str_to_tbl (str)
-    local res = {}
-    for line in str:gmatch("[^\n]+") do
-        table.insert(res, line)
-    end
-    return res
-end
-
-vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
-vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
-vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
-
 local function parse_diff_output (diff_output)
     local diff_result = {
         add = {},
@@ -37,11 +29,9 @@ local function parse_diff_output (diff_output)
         del = {},
     }
 
-    diff_output = str_to_tbl(diff_output)
-
     local check_line = false
     local x1, y1, x2, y2 = 0, 0, 0, 0
-    for _, diff_str in ipairs(diff_output) do
+    for diff_str in diff_output:gmatch("[^\n]+") do
         if diff_str:match("^@@ .* @@$") then
             x1, y1, x2, y2 = diff_str:match("@@ %-([%d]+),?([%d]*) %+([%d]+),?([%d]*) @@")
             x1 = tonumber(x1)
@@ -105,14 +95,20 @@ local function diff_buf ()
 end
 
 local function get_git_content (callback)
+    local rel_file_path = vim.fn.expand("%:p:.")
+    
+    local handle = io.popen("git rev-parse --show-prefix", 'r')
+    local rel_path_from_root = handle:read("*l")
+    handle:close()
+
+    -- seems we dont need the async git show?
     local stdout = vim.loop.new_pipe(false)
-    local handle = nil
     handle = vim.loop.spawn("git",
         {
-            args =  { "show", "HEAD:./" .. vim.fn.expand("%:t") },
+            args = { "show", "HEAD:" .. rel_path_from_root .. rel_file_path },
             stdio = { nil, stdout, nil }
         },
-        function (code)
+        function(code)
             stdout:read_stop()
             stdout:close()
             handle:close()
