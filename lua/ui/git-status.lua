@@ -12,53 +12,47 @@ function M.get_git_branch ()
     return git_branch == '' and "UNKNOWN" or git_branch
 end
 
--- GPT4
-local function parse_diff_output (diff_output)
-    local diff_result = { add = {}, mod = {}, del = {} }
-    
-    local function split_str(inputstr, sep)
-        if sep == nil then
-            sep = "%s"
-        end
-        local t = {}
-        for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-            table.insert(t, str)
-        end
-        return t
-    end
 
-    for diff_line in string.gmatch(diff_str, "(@@%s-[^@]+@@)") do
-        local header = string.match(diff_line, "@@%s-(.-)%s-@@")
-        local parts = split_str(header, ",?")
-        local old_start, old_len, new_start, new_len = 
-            tonumber(parts[1]), tonumber(parts[2] or 1), 
-            tonumber(parts[4]), tonumber(parts[5] or 1)
-        
-        local diff_content = string.match(diff_line, "@@%s-.-%s-@@%s(.+)")
-        if not diff_content then
-            diff_content = ""
-        end
-        
-        if old_len == 0 then
-            for i = 1, new_len do
-                table.insert(diff_result.add, new_start + i - 1)
-            end
-        elseif new_len == 0 then
-            table.insert(diff_result.del, old_start)
-        else
-            local added = 0
-            for content_line in string.gmatch(diff_content, "(.-)\n") do
-                if string.sub(content_line, 1, 1) == "+" then
-                    added = added + 1
-                    table.insert(diff_result.add, new_start + added - 1)
-                elseif string.sub(content_line, 1, 1) == "-" then
-                    table.insert(diff_result.mod, old_start + added)
-                end
-            end
-        end
+-- TODO: only render window?
+local function parse_diff_output (diff_output)
+    local diff_result = {
+        add = {},
+        mod = {},
+        del = {},
+    }
+
+    -- for hunk in diff_output:gmatch("@@%s-([^\n]+)") do
+    --     -- print(hunk)
+    --     local add_s_row, add_count = hunk:match(" -%d+,0 %+(%d+),?(.*) @@$")
+    --     add_count = add_count == '' and 1 or tonumber(add_count)
+    --     add_s_row = tonumber(add_s_row)
+    -- 
+    --     for i = 1, add_count do
+    --         table.insert(diff_result.add, add_s_row + i - 1)
+    --     end
+    -- end
+    
+    for hunk in diff_output:gmatch("@@%s-([^\n]+)") do
+        local del_row = hunk:match(" -%d+.* %+(.*),0")
+        table.insert(diff_result.del, tonumber(del_row) + 1)
     end
 
     return diff_result
+end
+
+vim.fn.sign_define("GitAdd",     { text = '┃', texthl = "GitAdd" })
+vim.fn.sign_define("GitChange",  { text = '┃', texthl = "GitChange" })
+vim.fn.sign_define("GitDelete",  { text = '', texthl = "GitDelete" })
+vim.fn.sign_define("GitUnstage", { text = '┃', texthl = "GitUnstage" })
+
+local function set_diff_sign (diff_result)
+    local bufnr = api.nvim_get_current_buf()
+    for _, linenr in ipairs(diff_result.add) do
+        vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = linenr })
+    end
+    for _, linenr in ipairs(diff_result.del) do
+        vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = linenr })
+    end
 end
 
 local function func ()
@@ -73,14 +67,18 @@ local function func ()
 
     local diff_output = vim.diff(git_content, buf_content .. '\n', {})
 
-    print(diff_output)
+    -- print(diff_output)
 
-    -- local diff_result = parse_diff_output(diff_output)
+    local diff_result = parse_diff_output(diff_output)
+    -- print(vim.inspect(diff_result))
+    set_diff_sign(diff_result)
 end
 
-api.nvim_create_autocmd({ "CursorMoved" }, {
-    callback = func
-})
+api.nvim_set_keymap('n', ',g', '', { callback = func })
+
+-- api.nvim_create_autocmd({ "CursorMoved" }, {
+--     callback = func
+-- })
 
 return M
 
