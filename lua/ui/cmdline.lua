@@ -179,11 +179,14 @@ api.nvim_set_keymap('n', '<F12>', '', {
     end
 })
 
-api.nvim_create_autocmd("ExitPre", {
-    callback = function ()
-        api.nvim_buf_delete(cmdline_bufnr, { force = true })
-    end
-})
+-- move to clipboard
+-- api.nvim_create_autocmd("ExitPre", {
+--     callback = function ()
+--         api.nvim_command("let @+=@y")
+--         os.exit()
+--         -- api.nvim_buf_delete(cmdline_bufnr, { force = true })
+--     end
+-- })
 
 api.nvim_create_user_command("M",
     function ()

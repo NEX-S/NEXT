@@ -1,7 +1,5 @@
 local api = vim.api
 
-local messages = require "ui.messages"
-
 local M = {}
 
 function M.get_git_branch ()
