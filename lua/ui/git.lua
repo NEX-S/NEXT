@@ -90,6 +90,7 @@ local function parse_diff_output (diff_output)
     return diff_result
 end
 
+-- using other replace
 local function set_diff_sign (diff_result, bufnr)
     vim.fn.sign_unplace("GitSigns")
 

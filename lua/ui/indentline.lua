@@ -85,48 +85,41 @@ local function select_indent ()
     if cursor_indent == 0 then
         for i = s_row - 1, 1, -1 do
             local line_str = buf_line_tbl[i]
-            if not line_str:match("^%s*$") then
-                s_row = i
-            else
-                break
-            end
+            if line_str:match("^%s*$") then break end
+            s_row = s_row - 1
         end
 
         for i = e_row + 1, api.nvim_buf_line_count(0) do
             local line_str = buf_line_tbl[i]
-            if not line_str:match("^%s*$") then
-                e_row = i
-            else
-                break
-            end
+            if line_str:match("^%s*$") then break end
+            e_row = e_row + 1
         end
     else
         for i = s_row - 1, 1, -1 do
             local line_str = buf_line_tbl[i]
             if not line_str:match("^%s*$") then
-                if line_str:find("%S") - 1 >= cursor_indent then
-                    s_row = i
-                else
-                    break
-                end
+                if line_str:find("%S") - 1 < cursor_indent then break end
             end
+            s_row = s_row - 1
         end
 
         for i = e_row + 1, api.nvim_buf_line_count(0) do
             local line_str = buf_line_tbl[i]
             if not line_str:match("^%s*$") then
-                if line_str:find("%S") - 1 >= cursor_indent then
-                    e_row = i
-                else
-                    break
-                end
+                if line_str:find("%S") - 1 < cursor_indent then break end
             end
+            e_row = e_row + 1
         end
     end
 
     api.nvim_win_set_cursor(0, { s_row, 0 })
-    api.nvim_feedkeys('vV' .. (e_row - s_row) .. 'j', 'n', false)
+    local offset = e_row - s_row
+
+    if offset == 0 then
+        api.nvim_feedkeys('vV', 'n', false)
+    else
+        api.nvim_feedkeys('vV' .. offset .. 'j', 'n', false)
+    end
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
-
