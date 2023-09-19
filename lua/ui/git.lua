@@ -39,10 +39,6 @@ local function parse_diff_output (diff_output)
 
     diff_output = str_to_tbl(diff_output)
 
-
-    -- @@ -10,0 +11 @@
-    -- +]]
-
     local check_line = false
     local x1, y1, x2, y2 = 0, 0, 0, 0
     for _, diff_str in ipairs(diff_output) do
@@ -59,7 +55,6 @@ local function parse_diff_output (diff_output)
         if check_line then
             if diff_str:match("^%+") then
                 for i = 1, y2 do
-                    print(x2 + i - 1)
                     table.insert(diff_result.add, x2 + i - 1)
                 end
                 check_line = false
@@ -105,7 +100,6 @@ local function diff_buf ()
     local buf_content = get_buf_content(bufnr)
 
     local diff_output = vim.diff(git_content, buf_content, {})
-    print(diff_output)
     local diff_result = parse_diff_output(diff_output)
     set_diff_sign(diff_result, bufnr)
 end
