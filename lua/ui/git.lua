@@ -22,12 +22,8 @@ function M.get_git_branch ()
     return git_branch
 end
 
-local function parse_diff_output (diff_output)
-    local diff_result = {
-        add = {},
-        mod = {},
-        del = {},
-    }
+local function parse_diff_output (diff_output, bufnr)
+    local diff_result = {}
 
     local x1, y1, x2, y2 = 0, 0, 0, 0
     local check_next_prefix = false
@@ -37,14 +33,14 @@ local function parse_diff_output (diff_output)
         if check_next_prefix == true then
             if prefix == '+' then
                 for i = 1, y2 do
-                    table.insert(diff_result.add, x2 + i - 1)
+                    table.insert(diff_result, { name = 'GitAdd', buffer = bufnr, lnum = x2 + i - 1 })
                 end
             elseif prefix == '-' and y1 == y2 then
                 for i = 0, y2 - 1 do
-                    table.insert(diff_result.mod, x2 + i)
+                    table.insert(diff_result, { name = 'GitMod', buffer = bufnr, lnum = x2 + i })
                 end
             else
-                table.insert(diff_result.del, x2 + 1)
+                table.insert(diff_result, { name = 'GitDel', buffer = bufnr, lnum = x2 + 1 })
             end
             check_next_prefix = false
         end
@@ -58,52 +54,11 @@ local function parse_diff_output (diff_output)
             y2 = y2 == '' and 1 or tonumber(y2)
             check_next_prefix = true
         end
-
-        -- if diff_str:match("^@@ .* @@$") then
-        --     x1, y1, x2, y2 = diff_str:match("@@ %-([%d]+),?([%d]*) %+([%d]+),?([%d]*) @@")
-        --     x1 = tonumber(x1)
-        --     x2 = tonumber(x2)
-        -- 
-        --     y1 = y1 == '' and 1 or tonumber(y1)
-        --     y2 = y2 == '' and 1 or tonumber(y2)
-        --     check_next_prefix = true
-        -- end
-        -- 
-        -- if check_next_prefix then
-        --     if diff_str:match("^%+") then
-        --         for i = 1, y2 do
-        --             table.insert(diff_result.add, x2 + i - 1)
-        --         end
-        --         check_next_prefix = false
-        --     elseif diff_str:match("^-") and y1 == y2 then
-        --         for i = 0, y2 - 1 do
-        --             table.insert(diff_result.mod, x2 + i)
-        --         end
-        --         check_next_prefix = false
-        --     elseif diff_str:match("^-") then
-        --         table.insert(diff_result.del, x2 + 1)
-        --         check_next_prefix = false
-        --     end
-        -- end
     end
 
     return diff_result
 end
 
--- using other replace
-local function set_diff_sign (diff_result, bufnr)
-    vim.fn.sign_unplace("GitSigns")
-
-    for _, linenr in ipairs(diff_result.add) do
-        vim.fn.sign_place(0, "GitSigns", "GitAdd", bufnr, { lnum = linenr })
-    end
-    for _, linenr in ipairs(diff_result.del) do
-        vim.fn.sign_place(0, "GitSigns", "GitDel", bufnr, { lnum = linenr })
-    end
-    for _, linenr in ipairs(diff_result.mod) do
-        vim.fn.sign_place(0, "GitSigns", "GitMod", bufnr, { lnum = linenr })
-    end
-end
 
 local function get_buf_content (bufnr)
     return table.concat(
@@ -111,60 +66,52 @@ local function get_buf_content (bufnr)
     ) .. '\n'
 end
 
-local git_content = ""
-local function diff_buf ()
-    local bufnr = api.nvim_get_current_buf()
-    local buf_content = get_buf_content(bufnr)
-
-    local diff_output = vim.diff(git_content, buf_content, {})
-    local diff_result = parse_diff_output(diff_output)
-    set_diff_sign(diff_result, bufnr)
-end
-
-local function get_git_content (callback)
+local function get_git_content ()
     local rel_file_path = vim.fn.expand("%:p:.")
     
     local handle = io.popen("git rev-parse --show-prefix", 'r')
     local rel_path_from_root = handle:read("*l")
     handle:close()
 
-    -- seems we dont need the async git show?
-    local stdout = vim.loop.new_pipe(false)
-    handle = vim.loop.spawn("git",
-        {
-            args = { "show", "HEAD:" .. rel_path_from_root .. rel_file_path },
-            stdio = { nil, stdout, nil }
-        },
-        function(code)
-            stdout:read_stop()
-            stdout:close()
-            handle:close()
-        end
-    )
+    handle = io.popen("git show HEAD:./" .. rel_path_from_root .. rel_file_path)
+    local git_content = handle:read("*a")
+    handle:close()
 
-    stdout:read_start(
-        function(err, data)
-            git_content = data ~= nil and data or ""
-            vim.schedule_wrap(callback)()
-        end
-    )
+    return git_content
 end
 
+local git_content_cache = ""
+-- AUTOCMD EVENTS : DirChanged
 api.nvim_create_autocmd("BufWinEnter", {
     callback = function ()
         if M.get_git_branch() == "UNKNOWN" then
             return
         end
+
+        vim.fn.sign_unplace("GitSigns")
+
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
-        get_git_content(function ()
-            local diff_output = vim.diff(git_content, buf_content, {})
-            local diff_result = parse_diff_output(diff_output)
-            set_diff_sign(diff_result, bufnr)
-        end)
+
+        git_content_cache = get_git_content()
+        local diff_output = vim.diff(git_content_cache, buf_content, {})
+        local diff_result = parse_diff_output(diff_output, bufnr)
+
+        vim.fn.sign_placelist(diff_result)
     end
 })
 
-api.nvim_create_autocmd("TextChanged", { callback = diff_buf })
+api.nvim_create_autocmd("TextChanged", {
+    callback = function ()
+        vim.fn.sign_unplace("GitSigns")
+        local bufnr = api.nvim_get_current_buf()
+        local buf_content = get_buf_content(bufnr)
+
+        local diff_output = vim.diff(git_content_cache, buf_content, {})
+        local diff_result = parse_diff_output(diff_output, bufnr)
+
+        vim.fn.sign_placelist(diff_result)
+    end
+})
 
 return M
