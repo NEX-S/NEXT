@@ -91,7 +91,7 @@ end
 local function get_buf_content (bufnr)
     return table.concat(
         vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n'
-    )
+    ) .. '\n'
 end
 
 local git_content = ""
@@ -99,7 +99,7 @@ local function diff_buf ()
     local bufnr = api.nvim_get_current_buf()
     local buf_content = get_buf_content(bufnr)
 
-    local diff_output = vim.diff(git_content .. '\n', buf_content, {})
+    local diff_output = vim.diff(git_content, buf_content, {})
     print(diff_output)
     local diff_result = parse_diff_output(diff_output)
     set_diff_sign(diff_result, bufnr)
