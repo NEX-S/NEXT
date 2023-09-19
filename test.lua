@@ -47,10 +47,17 @@ local str = [[
     this is line 47
     this is line 48
     this is line 49
+    this is line 50
+    this is line 51
+    this is line 52
+    this is line 53
+    this is line 54
+    this is line 55
     this is line 56
     this is line 57
     this is line 58
     this is line 59
+    this is line 60
     this is line 61
     this is line 62
     this is line 63
@@ -60,19 +67,16 @@ local str = [[
     this is line 67
     this is line 68
     this is line 69
-    this is line 70xxxxxxxxx
-    this is line 71xxxxxxxxx
-    this is line 72xxxxxxxxx
-    this is line 73xxxxxxxxx
+    this is line 70
+    this is line 71
+    this is line 72
+    this is line 73
     this is line 74
     this is line 75
     this is line 76
     this is line 77
     this is line 78
     this is line 79
-    this is line 80
-    this is line 80
-    this is line 80
     this is line 80
     this is line 81
     this is line 82
@@ -94,4 +98,3 @@ local str = [[
     this is line 98
     this is line 99
 ]]
-

@@ -55,6 +55,11 @@ local function parse_diff_output (diff_output)
     --     end
     -- end
 
+    diff_output = str_to_tbl(diff_output)
+    for _, diff_str in ipairs(diff_output) do
+        print(diff_str)
+    end
+
     return diff_result
 end
 
@@ -89,7 +94,7 @@ local function diff_buf ()
 
     local diff_output = vim.diff(git_content, buf_content .. '\n', {})
 
-    print(diff_output)
+    -- print(diff_output)
 
     local diff_result = parse_diff_output(diff_output)
 
