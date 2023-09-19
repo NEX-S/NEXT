@@ -40,9 +40,8 @@ local function parse_diff_output (diff_output)
     diff_output = str_to_tbl(diff_output)
 
 
-    -- @@ -9,0 +10 @@
-    -- +    this is line 9
-    -- add = { 10 }
+    -- @@ -10,0 +11 @@
+    -- +]]
 
     local check_line = false
     local x1, y1, x2, y2 = 0, 0, 0, 0
@@ -53,13 +52,14 @@ local function parse_diff_output (diff_output)
             x2 = tonumber(x2)
 
             y1 = y1 == '' and 1 or tonumber(y1)
-            y2 = y2 == '' and 2 or tonumber(y2)
+            y2 = y2 == '' and 1 or tonumber(y2)
             check_line = true
         end
 
         if check_line then
             if diff_str:match("^%+") then
                 for i = 1, y2 do
+                    print(x2 + i - 1)
                     table.insert(diff_result.add, x2 + i - 1)
                 end
                 check_line = false
