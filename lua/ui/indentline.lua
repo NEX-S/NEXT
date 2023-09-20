@@ -38,7 +38,7 @@ local function render_window_indent (re_render)
 
     local line_tbl = api.nvim_buf_get_lines(bufnr, win_s_row, win_e_row, false)
 
-    local shiftwidth = vim.o.shiftwidth
+    local shiftwidth = api.nvim_get_option_value("shiftwidth", {})
 
     local prev_indent_str = ''
     for i, str in ipairs(line_tbl) do
@@ -57,7 +57,10 @@ local function render_window_indent (re_render)
                 },
                 virt_text_pos = "overlay",
             })
+        else
+            prev_indent_str = ''
         end
+
     end
 end
 
@@ -66,7 +69,6 @@ api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
         vim.defer_fn(function ()
             render_window_indent(true)
         end, 5)
-        -- render_window_indent(true)
     end
 })
 
@@ -136,3 +138,73 @@ local function select_indent ()
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
+
+
+-- local api = vim.api
+-- 
+-- local namespace_id = api.nvim_create_namespace("indnetlines")
+-- 
+-- local indent_str_cache = {}
+-- local function get_indent_str (indent)
+--     local n = indent / 4 - 1
+-- 
+--     if indent_str_cache[n] then
+--         return indent_str_cache[n]
+--     end
+-- 
+--     local block_1 = "│···"
+--     local block_2 = "╎···"
+-- 
+--     local res = indent >= 4 and "····" or ''
+--     for i = 1, n do
+--         res = res .. (i % 2 == 0 and block_1 or block_2)
+--     end
+-- 
+--     indent_str_cache[n] = res
+--     return res
+-- end
+-- 
+-- local function line_render (row, str)
+--     local indent = str:find("%S") or 1
+--     local indent_str = get_indent_str(indent - 1)
+--     api.nvim_buf_set_extmark(0, namespace_id, row, 0, {
+--         hl_mode = "combine",
+--             virt_text = {
+--             { indent_str, "NonText" },
+--         },
+--         virt_text_pos = "overlay",
+--     })
+-- end
+-- 
+-- local function render_window_indentline (re_render)
+--     local win_s_row = vim.fn.getpos("w0")[2]
+--     local win_e_row = vim.fn.getpos("w$")[2]
+-- 
+--     if re_render == true then
+--         api.nvim_buf_clear_namespace(0, namespace_id, win_s_row, win_e_row)
+--     end
+-- 
+--     local str_tbl = api.nvim_buf_get_lines(0, win_s_row, win_e_row, false)
+-- 
+--     local prev_str = ''
+-- 
+--     for i, str in ipairs(str_tbl) do
+--         if str ~= '' then
+--             line_render(win_s_row + i - 1, str)
+--             prev_str = str
+--         else
+--             line_render(win_s_row + i - 1, prev_str)
+--         end
+--     end
+-- end
+-- 
+-- api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertCharPre" }, {
+--     callback = function ()
+--         vim.defer_fn(function ()
+--             render_window_indentline(true)
+--         end, 2)
+--     end
+-- })
+-- api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter", }, {
+--     callback = render_window_indentline
+-- })
