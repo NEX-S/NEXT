@@ -2,85 +2,75 @@ local api = vim.api
 
 local namespace_id = api.nvim_create_namespace("indnetlines")
 
--- local indent_str_cache = {}
--- local function get_indent_str (indent)
---     local n = indent / 4 - 1
--- 
---     if indent_str_cache[n] then
---         return indent_str_cache[n]
---     end
--- 
---     local block_1 = "│···"
---     local block_2 = "╎···"
--- 
---     local res = indent >= 4 and "····" or ''
---     for i = 1, n do
---         res = res .. (i % 2 == 0 and block_1 or block_2)
---     end
--- 
---     indent_str_cache[n] = res
---     return res
--- end
--- 
--- local function line_render (row, str)
---     local indent = str:find("%S") or 1
---     local indent_str = get_indent_str(indent - 1)
---     api.nvim_buf_set_extmark(0, namespace_id, row, 0, {
---         hl_mode = "combine",
---             virt_text = {
---             { indent_str, "NonText" },
---         },
---         virt_text_pos = "overlay",
---         -- strict = false,
---         -- right_gravity = true,
---     })
--- end
--- 
--- local function render_window_indentline (re_render)
---     local win_s_row = vim.fn.getpos("w0")[2]
---     local win_e_row = vim.fn.getpos("w$")[2]
--- 
---     if re_render == true then
---         api.nvim_buf_clear_namespace(0, namespace_id, win_s_row, win_e_row)
---     end
--- 
---     local str_tbl = api.nvim_buf_get_lines(0, win_s_row, win_e_row, false)
--- 
---     local prev_str = ''
--- 
---     for i, str in ipairs(str_tbl) do
---         if str ~= '' then
---             line_render(win_s_row + i - 1, str)
---             prev_str = str
---         else
---             line_render(win_s_row + i - 1, prev_str)
---         end
---     end
--- end
--- 
+local indent_str_cache = {}
+local function get_indent_str (line_indent, shiftwidth)
+
+    local n = math.floor(line_indent / shiftwidth)
+
+    local cache_str = indent_str_cache[n]
+    if cache_str ~= nil then
+        return cache_str
+    end
+
+    local block_1 = '╎' .. string.rep('·', shiftwidth - 1)
+    local block_2 = '│' .. string.rep('·', shiftwidth - 1)
+
+    local indent_str = string.rep('·', shiftwidth)
+    for i = 2, n do
+        indent_str = indent_str .. (i % 2 == 0 and block_1 or block_2)
+    end
+
+    indent_str_cache[n] = indent_str
+
+    return indent_str
+end
+
+local function render_window_indent (re_render)
+    local win_s_row = vim.fn.getpos("w0")[2]
+    local win_e_row = vim.fn.getpos("w$")[2]
+
+    if re_render == true then
+        api.nvim_buf_clear_namespace(0, namespace_id, win_s_row, win_e_row)
+    end
+
+    local line_tbl = api.nvim_buf_get_lines(0, win_s_row, win_e_row, false)
+
+    local shiftwidth = vim.o.shiftwidth
+
+    local prev_indent_str = ''
+    for i, str in ipairs(line_tbl) do
+        local line_indent = str:find("%S")
+
+        if line_indent ~= 1 then
+            local indent_str = line_indent == nil
+                and prev_indent_str or get_indent_str(line_indent, shiftwidth)
+
+            api.nvim_buf_set_extmark(0, namespace_id, win_s_row + i - 1, 0, {
+                hl_mode = "combine",
+                virt_text = {
+                    { indent_str, "NonText" },
+                },
+                virt_text_pos = "overlay",
+            })
+
+            prev_indent_str = indent_str
+        end
+    end
+end
+
 -- api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertCharPre" }, {
 --     callback = function ()
 --         vim.defer_fn(function ()
---             render_window_indentline(true)
+--             render_window_indent(true)
 --         end, 2)
 --     end
 -- })
+-- 
 -- api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter", }, {
---     callback = render_window_indentline
+--     callback = render_window_indent
 -- })
 
-local function get_line_indent ()
-end
-
-local function get_indent_str ()
-end
-
-local function render_line_indent ()
-end
-
-local function render_window_indent ()
-end
-
+api.nvim_set_keymap('n', ',f', '', { callback = render_window_indent })
 
 ----------------------------
 
@@ -131,4 +121,4 @@ local function select_indent ()
     end
 end
 
-    api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
+api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
