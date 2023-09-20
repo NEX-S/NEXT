@@ -55,62 +55,50 @@ end
 
 local function get_buf_content (bufnr)
     return table.concat(
-        vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n'
+        api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n'
     ) .. '\n'
 end
 
-local git_path_cache = ''
-local git_content_cache = ''
-local function get_git_content ()
+local git_content_cache = {}
+-- local function get_git_content (bufnr)
+--     local cache = git_content_cache[bufnr]
+--     if cache then
+--         return cache
+--     end
+-- 
+--     local buf_name = api.nvim_buf_get_name(bufnr)
+--     local git_path_cache = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
+-- 
+--     local rel_file_path = buf_name:sub(#git_path_cache + 1)
+-- 
+--     git_content_cache[bufnr] = vim.fn.system("git show HEAD:" .. rel_file_path)
+-- 
+--     return git_content_cache[bufnr]
+-- end
 
-    local file_path = api.nvim_buf_get_name(0)
-    local rel_file_path = file_path:sub(#git_path_cache + 1)
-    git_content_cache = vim.fn.system("git show HEAD:" .. rel_file_path)
+local function get_git_content (bufnr)
+    local cache = git_content_cache[bufnr]
+    if cache then
+        return cache
+    end
 
-    return git_content_cache
+    local buf_name = api.nvim_buf_get_name(bufnr)
 
-    -- local rel_file_path = vim.fn.expand("%:p:.")
-    -- local handle = io.popen("git rev-parse --show-prefix", 'r')
-    -- local rel_path_from_root = handle:read("*l")
-    -- handle:close()
-    -- seems cause crash
-    -- handle = io.popen("git show HEAD:./" .. rel_file_path)
-    -- local git_content = handle:read("*a")
-    -- handle:close()
-    -- return git_content
+    local git_abs_path = vim.fn.system("git rev-parse --show-toplevel")
+    local rel_file_path = buf_name:sub(#git_abs_path + 1)
+
+    git_content_cache[bufnr] = vim.fn.system("git show HEAD:" .. rel_file_path)
+
+    return git_content_cache[bufnr]
 end
-
-
--- TODO:
-api.nvim_create_autocmd("DirChanged", {
-    callback = function ()
-        git_path_cache = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
-    end
-})
-
-api.nvim_set_keymap('n', ',f', '', {
-    callback = function ()
-        local git_path = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
-        local file_path = api.nvim_buf_get_name(0)
-
-        print(file_path:sub(#git_path + 1))
-    end
-})
-
-git_path_cache = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
 
 api.nvim_create_autocmd("BufWinEnter", {
     callback = function ()
-        if M.get_git_branch() == "UNKNOWN" then
-            return
-        end
-
-        vim.fn.sign_unplace("GitSigns")
+        -- vim.fn.sign_unplace("GitSigns")
 
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
-
-        local diff_output = vim.diff(get_git_content(), buf_content, {})
+        local diff_output = vim.diff(get_git_content(bufnr), buf_content, {})
         local diff_result = parse_diff_output(diff_output, bufnr)
 
         vim.fn.sign_placelist(diff_result)
@@ -120,10 +108,10 @@ api.nvim_create_autocmd("BufWinEnter", {
 api.nvim_create_autocmd("TextChanged", {
     callback = function ()
         vim.fn.sign_unplace("GitSigns")
+
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
-
-        local diff_output = vim.diff(git_content_cache, buf_content, {})
+        local diff_output = vim.diff(git_content_cache[bufnr] or '', buf_content, {})
         local diff_result = parse_diff_output(diff_output, bufnr)
 
         vim.fn.sign_placelist(diff_result)
