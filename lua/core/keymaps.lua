@@ -1,6 +1,8 @@
 local api = vim.api
 
 local n_mode = {
+    ["j"] = "gj",
+    ["k"] = "gk",
     ["J"] = "8gj",
     ["K"] = "8gk",
     ["H"] = "_",

@@ -7,19 +7,13 @@ vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
 local M = {}
 
 function M.get_git_branch ()
-    local dir = vim.fn.expand("%:h")
-
-    local io_handle = io.popen("git branch --show-current", 'r')
-
-    if io_handle == nil then
-        return "UNKNOWN"
-    end
-
+    local io_handle = io.popen("git branch --show-current 2> /dev/null", 'r')
     local git_branch = io_handle:read()
 
     io_handle:close()
 
-    return git_branch
+    -- todo
+    return git_branch == '' and "UNKNOWN" or git_branch
 end
 
 local function parse_diff_output (diff_output, bufnr)
@@ -66,12 +60,15 @@ local function get_buf_content (bufnr)
     ) .. '\n'
 end
 
+local git_path_cache = ''
+local git_content_cache = ''
 local function get_git_content ()
-    local git_path = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
-    local file_path = api.nvim_buf_get_name(0)
-    local rel_file_path = file_path:sub(#git_path + 1)
 
-    return vim.fn.system("git show HEAD:" .. rel_file_path)
+    local file_path = api.nvim_buf_get_name(0)
+    local rel_file_path = file_path:sub(#git_path_cache + 1)
+    git_content_cache = vim.fn.system("git show HEAD:" .. rel_file_path)
+
+    return git_content_cache
 
     -- local rel_file_path = vim.fn.expand("%:p:.")
     -- local handle = io.popen("git rev-parse --show-prefix", 'r')
@@ -84,12 +81,11 @@ local function get_git_content ()
     -- return git_content
 end
 
-local git_content_cache = ""
 
 -- TODO:
 api.nvim_create_autocmd("DirChanged", {
     callback = function ()
-        -- ...
+        git_path_cache = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
     end
 })
 
@@ -102,6 +98,8 @@ api.nvim_set_keymap('n', ',f', '', {
     end
 })
 
+git_path_cache = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
+
 api.nvim_create_autocmd("BufWinEnter", {
     callback = function ()
         if M.get_git_branch() == "UNKNOWN" then
@@ -113,9 +111,7 @@ api.nvim_create_autocmd("BufWinEnter", {
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
 
-        git_content_cache = get_git_content()
-
-        local diff_output = vim.diff(git_content_cache, buf_content, {})
+        local diff_output = vim.diff(get_git_content(), buf_content, {})
         local diff_result = parse_diff_output(diff_output, bufnr)
 
         vim.fn.sign_placelist(diff_result)
