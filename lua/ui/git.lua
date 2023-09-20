@@ -219,8 +219,8 @@ api.nvim_create_autocmd("BufWinEnter", {
     callback = function()
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
-        local diff_result = {}
 
+        local diff_result = {}
         vim.diff(get_git_content(bufnr), buf_content, {
             result_type = 'indices',
             on_hunk = function(a_start, a_count, b_start, b_count)
@@ -238,14 +238,16 @@ api.nvim_create_autocmd("TextChanged", {
 
         local bufnr = api.nvim_get_current_buf()
         local buf_content = get_buf_content(bufnr)
-        local diff_result = {}
 
+        local diff_result = {}
         vim.diff(git_content_cache[bufnr], buf_content, {
             result_type = 'indices',
             on_hunk = function(a_start, a_count, b_start, b_count)
                 handle_diff_hunks(a_start, a_count, b_start, b_count, bufnr, diff_result)
             end
         })
+
+        print(vim.inspect(diff_result))
 
         vim.fn.sign_placelist(diff_result)
     end
