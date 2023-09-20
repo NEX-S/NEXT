@@ -67,17 +67,21 @@ local function get_buf_content (bufnr)
 end
 
 local function get_git_content ()
-    local rel_file_path = vim.fn.expand("%:p:.")
-    
-    local handle = io.popen("git rev-parse --show-prefix", 'r')
-    local rel_path_from_root = handle:read("*l")
-    handle:close()
+    local git_path = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
+    local file_path = api.nvim_buf_get_name(0)
+    local rel_file_path = file_path:sub(#git_path + 1)
 
-    handle = io.popen("git show HEAD:./" .. rel_path_from_root .. rel_file_path)
-    local git_content = handle:read("*a")
-    handle:close()
+    return vim.fn.system("git show HEAD:" .. rel_file_path)
 
-    return git_content
+    -- local rel_file_path = vim.fn.expand("%:p:.")
+    -- local handle = io.popen("git rev-parse --show-prefix", 'r')
+    -- local rel_path_from_root = handle:read("*l")
+    -- handle:close()
+    -- seems cause crash
+    -- handle = io.popen("git show HEAD:./" .. rel_file_path)
+    -- local git_content = handle:read("*a")
+    -- handle:close()
+    -- return git_content
 end
 
 local git_content_cache = ""
@@ -91,13 +95,10 @@ api.nvim_create_autocmd("DirChanged", {
 
 api.nvim_set_keymap('n', ',f', '', {
     callback = function ()
-        local git_path = vim.fn.system("git rev-parse --git-dir")
+        local git_path = vim.fn.system("git rev-parse --git-dir"):sub(1, -6)
         local file_path = api.nvim_buf_get_name(0)
 
-        print(git_path)
-        print(file_path)
-        
-        -- print(file_path:sub(#git_path - 1))
+        print(file_path:sub(#git_path + 1))
     end
 })
 
@@ -113,6 +114,7 @@ api.nvim_create_autocmd("BufWinEnter", {
         local buf_content = get_buf_content(bufnr)
 
         git_content_cache = get_git_content()
+
         local diff_output = vim.diff(git_content_cache, buf_content, {})
         local diff_result = parse_diff_output(diff_output, bufnr)
 
