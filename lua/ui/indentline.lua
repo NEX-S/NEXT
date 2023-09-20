@@ -26,14 +26,17 @@ local function get_indent_str (line_indent, shiftwidth)
 end
 
 local function render_window_indent (re_render)
-    local win_s_row = vim.fn.getpos("w0")[2]
+
+    local win_s_row = vim.fn.getpos("w0")[2] - 1
     local win_e_row = vim.fn.getpos("w$")[2]
 
+    local bufnr = api.nvim_get_current_buf()
+
     if re_render == true then
-        api.nvim_buf_clear_namespace(0, namespace_id, win_s_row, win_e_row)
+        api.nvim_buf_clear_namespace(bufnr, namespace_id, win_s_row, win_e_row)
     end
 
-    local line_tbl = api.nvim_buf_get_lines(0, win_s_row, win_e_row, false)
+    local line_tbl = api.nvim_buf_get_lines(bufnr, win_s_row, win_e_row, false)
 
     local shiftwidth = vim.o.shiftwidth
 
@@ -45,32 +48,43 @@ local function render_window_indent (re_render)
             local indent_str = line_indent == nil
                 and prev_indent_str or get_indent_str(line_indent, shiftwidth)
 
-            api.nvim_buf_set_extmark(0, namespace_id, win_s_row + i - 1, 0, {
+            prev_indent_str = indent_str
+
+            api.nvim_buf_set_extmark(bufnr, namespace_id, win_s_row + i - 1, 0, {
                 hl_mode = "combine",
                 virt_text = {
                     { indent_str, "NonText" },
                 },
                 virt_text_pos = "overlay",
             })
-
-            prev_indent_str = indent_str
         end
     end
 end
 
--- api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertCharPre" }, {
---     callback = function ()
---         vim.defer_fn(function ()
---             render_window_indent(true)
---         end, 2)
---     end
--- })
--- 
--- api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter", }, {
---     callback = render_window_indent
--- })
+api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+    callback = function ()
+        vim.defer_fn(function ()
+            render_window_indent(true)
+        end, 5)
+        -- render_window_indent(true)
+    end
+})
 
-api.nvim_set_keymap('n', ',f', '', { callback = render_window_indent })
+api.nvim_create_autocmd("InsertCharPre", {
+    callback = function ()
+        vim.defer_fn(function ()
+            render_window_indent(true)
+        end, 5)
+    end
+})
+
+api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter", }, {
+    callback = function ()
+        vim.defer_fn(function ()
+            render_window_indent(false)
+        end, 10)
+	end
+})
 
 ----------------------------
 
