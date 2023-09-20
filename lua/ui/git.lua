@@ -12,8 +12,7 @@ function M.get_git_branch ()
 
     io_handle:close()
 
-    -- todo
-    return git_branch == '' and "UNKNOWN" or git_branch
+    return git_branch == nil and "UNKNOWN" or git_branch
 end
 
 local function parse_diff_output (diff_output, bufnr)
