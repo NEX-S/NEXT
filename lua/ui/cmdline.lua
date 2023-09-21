@@ -17,10 +17,13 @@ function M.open_messages_win (str)
     local str_tbl = str_to_tbl(str)
 
     if is_open == true then
+        table.insert(str_tbl, ' ················································')
         table.insert(str_tbl, '')
-        table.insert(str_tbl, '')
         api.nvim_buf_set_lines(messages_bufnr, -1, -1, false, str_tbl)
     else
+        table.insert(str_tbl, 1, " ")
+        table.insert(str_tbl, ' ················································')
+        table.insert(str_tbl, '')
         api.nvim_buf_set_lines(messages_bufnr, 0, -1, false, str_tbl)
     end
 
