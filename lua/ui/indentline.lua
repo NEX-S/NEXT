@@ -26,7 +26,6 @@ local function get_indent_str (line_indent, shiftwidth)
 end
 
 local function render_window_indent (re_render)
-
     local win_s_row = vim.fn.getpos("w0")[2] - 1
     local win_e_row = vim.fn.getpos("w$")[2]
 
@@ -60,7 +59,6 @@ local function render_window_indent (re_render)
         else
             prev_indent_str = ''
         end
-
     end
 end
 
