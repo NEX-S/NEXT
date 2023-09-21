@@ -1,13 +1,18 @@
+--     __  ___   _________  __ ____  ____________________________   --
+--    / / / / | / / ____/ |/ // __ \/ ____/ ____/_  __/ ____/ __ \  --
+--   / / / /  |/ / __/  |   // /_/ / __/ / /     / / / __/ / / / /  --
+--  / /_/ / /|  / /___ /   |/ ____/ /___/ /___  / / / /___/ /_/ /   --
+--  \____/_/ |_/_____//_/|_/_/   /_____/\____/ /_/ /_____/_____/    --
+--                                                                  --
 
-require "ft"
-require "ui"
+require "ft"  -- ~/.config/nvim/lua/ft/init.lua
+require "ui"  -- ~/.config/nvim/lua/ui/init.lua
 
-require "plugins"
+require "plugins"       -- ~/.config/nvim/lua/plugins/init.lua
+require "core.autocmd"  -- ~/.config/nvim/lua/core/autocmd.lua
 
 vim.defer_fn(function ()
-    require "core.options"
-    require "core.keymaps"
-    require "core.autocmd"
-
-    require "modules"
+    require "core.options"  -- ~/.config/nvim/lua/core/options.lua
+    require "core.keymaps"  -- ~/.config/nvim/lua/core/keymaps.lua
+    require "modules"       -- ~/.config/nvim/lua/modules/init.lua
 end, 20)
