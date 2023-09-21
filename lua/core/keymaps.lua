@@ -79,6 +79,7 @@ local x_mode = {
     ["y"] = 'my"yy`y',
     ["p"] = 'd"yP',
     ["<C-p>"] = 'd"dP',
+    ["<C-r>"] = '"ay<CMD>let @/=@a<CR>cgn',
 }
 
 for key, value in pairs(x_mode) do

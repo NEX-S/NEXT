@@ -11,14 +11,9 @@ api.nvim_create_autocmd("Filetype", {
     end,
 })
 
-
-api.nvim_create_autocmd("BufWInEnter", {
+api.nvim_create_autocmd("BufWinEnter", {
     callback = function ()
-        local line = vim.fn.line([['"]])
-        local col = vim.fn.col([['"]])
-
-        if line > 0 and line <= vim.fn.line("$") then
-            api.nvim_win_set_cursor(0, {line, col - 1})
-        end
+        local last_pos = vim.fn.getpos("'\"")
+        api.nvim_win_set_cursor(0, { last_pos[2], last_pos[3] - 1 })
     end
 })
