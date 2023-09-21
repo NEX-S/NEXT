@@ -13,14 +13,28 @@ api.nvim_create_autocmd("InsertCharPre", {
             return
         end
 
+        -- local cursor_line = api.nvim_get_current_line()
+        -- local cursor_colm = api.nvim_win_get_cursor(0)[2]
+        -- local cursor_char = cursor_line:sub(cursor_colm, cursor_colm)
+        -- 
+        -- if cursor_char:match("[%w-_#]") then
+        --     api.nvim_feedkeys(
+        --         api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), "n", false
+        --     )
+        -- elseif cursor_char == '/' then
+        --     api.nvim_feedkeys(
+        --         api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), "n", false
+        --     )
+        -- end
+
         local char = vim.v.char
         if char:match("[%w-_#]") then
             api.nvim_feedkeys(
-                api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), "n", false
+                api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), 'n', false
             )
         elseif char == '/' then
             api.nvim_feedkeys(
-                api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), "n", false
+                api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), 'n', false
             )
         end
     end
