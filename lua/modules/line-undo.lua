@@ -42,3 +42,25 @@ api.nvim_set_keymap('i', '<RIGHT>', '', {
     expr = true,
     replace_keycodes = true,
 })
+
+-- local api = vim.api
+-- 
+-- local undo_stack = {}
+-- 
+-- local function push (str)
+--     table.insert(undo_stack, str)
+-- end
+-- 
+-- local function pop ()
+--     return table.remove(undo_stack)
+-- end
+-- 
+-- api.nvim_set_keymap('i', '<LEFT>', '', {
+--     callback = function ()
+--     end
+-- })
+-- 
+-- api.nvim_set_keymap('i', '<RIGHT>', '', {
+--     callback = function ()
+--     end
+-- })

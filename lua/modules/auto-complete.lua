@@ -6,6 +6,7 @@ vim.o.completeopt = "menu,menuone,noselect,noinsert"
 -- dont affect <C-x><C-p>, affect <C-n>
 -- vim.o.complete    = ".,w,b"
 
+-- dont use nvim_input, it will effect dot-repeat behaviour
 api.nvim_create_autocmd("InsertCharPre", {
     callback = function ()
         if vim.fn.pumvisible() == 1 then
@@ -14,9 +15,13 @@ api.nvim_create_autocmd("InsertCharPre", {
 
         local char = vim.v.char
         if char:match("[%w-_#]") then
-            api.nvim_input("<C-x><C-p>")
+            api.nvim_feedkeys(
+                api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), "n", false
+            )
         elseif char == '/' then
-            api.nvim_input("<C-x><C-f>")
+            api.nvim_feedkeys(
+                api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), "n", false
+            )
         end
     end
 })

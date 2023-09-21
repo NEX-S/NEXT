@@ -46,7 +46,7 @@ local ui_options = {
     numberwidth  = 1,
     signcolumn   = "yes:1",
     -- statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '' %} ",
-    statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '-' %} ",
+    statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '' %} ",
 
     -- fillchars = "vert:⎹,vertleft:⎹,vertright:⎹,horiz:⸻,horizup:⸻,horizdown:⸻,fold: ,foldopen:│,foldclose:│,foldsep:│,eob:,msgsep:",
     listchars = "eol:⸥,space:·,trail:-,tab:>>,nbsp:n,extends:e,precedes:+",

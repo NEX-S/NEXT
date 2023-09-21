@@ -43,7 +43,6 @@ local n_mode = {
     ["<C-w>"] = "<CMD>write ++p<CR>",
     ["<C-q>"] = "<CMD>quit!<CR>",
     ["<C-p>"] = '"dp',
-    ["<C-s>"] = "<C-w>v",
 
     ["<C-h>"] = "gT",
     ["<C-j>"] = "gt",
@@ -57,6 +56,9 @@ local n_mode = {
 
     ["<C-f>"] = "/",
     ["<C-/>"] = "ggVG$",
+
+    -- file action
+    ["gf"] = "<CMD>tabnew <cfile><CR>"
 }
 
 for key, value in pairs(n_mode) do
@@ -104,9 +106,18 @@ local n_func = {
         end
 
         return 'a'
+    end,
+    ["<C-s>"] = function ()
+        local cursor_file = vim.fn.expand("<cfile>")
+        local file_prefix = cursor_file:sub(1, 1)
+        if file_prefix == '/' or file_prefix == '~' then
+            return "<CMD>vsp " .. cursor_file .. "<CR>"
+        end
+
+        return "<C-w>v"
     end
 }
 
 for key, value in pairs(n_func) do
-    api.nvim_set_keymap('n', key, '', { callback = value, expr = true, noremap = true })
+    api.nvim_set_keymap('n', key, '', { callback = value, expr = true, replace_keycodes = true, noremap = true })
 end

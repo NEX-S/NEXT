@@ -22,7 +22,7 @@ local function toggle_line_comment ()
         cursor_line = cursor_line:gsub("^(%s*)", "%1" .. cms .. " ")
     end
 
-    api.nvim_buf_set_lines(0, cursor_row - 1, cursor_row, false, { cursor_line })
+    api.nvim_set_current_line(cursor_line)
 end
 
 local function get_select_info (select_tbl, cms)
