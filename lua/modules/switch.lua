@@ -55,7 +55,7 @@ local function quick_switch ()
     if res then return "msxs" .. res .. '<ESC>`s' end
 
     res = switch_tbl[cursor_line:sub(cursor_colm - 1, cursor_colm)]
-    if res then return "mss<BS>" .. res .. '<ESC>`s' end
+    if res then return "s<BS>" .. res .. '<ESC>' end
 
     res = switch_tbl[cursor_char]
     if res then return "r" .. res end

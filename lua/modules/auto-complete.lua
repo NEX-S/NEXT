@@ -6,39 +6,61 @@ vim.o.completeopt = "menu,menuone,noselect,noinsert"
 -- dont affect <C-x><C-p>, affect <C-n>
 -- vim.o.complete    = ".,w,b"
 
--- dont use nvim_input, it will effect dot-repeat behaviour
-api.nvim_create_autocmd("InsertCharPre", {
+local key_tbl = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '_',
+}
+
+for _, key in ipairs(key_tbl) do
+    api.nvim_set_keymap('i', key, '', {
+        callback = function ()
+            if vim.fn.pumvisible() == 1 then
+                return key
+            end
+		
+            return key .. "<C-x><C-p>"
+        end,
+        expr = true,
+        replace_keycodes = true,
+        noremap = true,
+    })
+end
+
+api.nvim_set_keymap('i', '/', '', {
     callback = function ()
         if vim.fn.pumvisible() == 1 then
-            return
+            return key
         end
 
-        -- local cursor_line = api.nvim_get_current_line()
-        -- local cursor_colm = api.nvim_win_get_cursor(0)[2]
-        -- local cursor_char = cursor_line:sub(cursor_colm, cursor_colm)
-        -- 
-        -- if cursor_char:match("[%w-_#]") then
-        --     api.nvim_feedkeys(
-        --         api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), "n", false
-        --     )
-        -- elseif cursor_char == '/' then
-        --     api.nvim_feedkeys(
-        --         api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), "n", false
-        --     )
-        -- end
-
-        local char = vim.v.char
-        if char:match("[%w-_#]") then
-            api.nvim_feedkeys(
-                api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), 'n', false
-            )
-        elseif char == '/' then
-            api.nvim_feedkeys(
-                api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), 'n', false
-            )
-        end
-    end
+        return key .. "<C-x><C-f>"
+    end,
+    expr = true,
+    replace_keycodes = true,
+    noremap = true,
 })
+
+
+-- api.nvim_create_autocmd("InsertCharPre", {
+--     callback = function ()
+--         if vim.fn.pumvisible() == 1 then
+--             return
+--         end
+-- 
+--         local char = vim.v.char
+--         if char:match("[%w-_#]") then
+--             api.nvim_feedkeys(
+--                 api.nvim_replace_termcodes("<C-x><C-p>", true, true, true), 'n', false
+--             )
+--         elseif char == '/' then
+--             api.nvim_feedkeys(
+--                 api.nvim_replace_termcodes("<C-x><C-f>", true, true, true), 'n', false
+--             )
+--         end
+--     end
+-- })
 
 local keymap_tbl = {
     ['<TAB>'] = function ()
