@@ -20,6 +20,7 @@ local ui_options = {
     showcmd        = false,
 
     cmdheight     = 0,
+    numberwidth  = 1,
     pumwidth      = 5,
     scrolloff     = 6,
     sidescrolloff = 10,
@@ -33,21 +34,16 @@ local ui_options = {
     redrawtime    = 100,
 
     mousemodel = "extend",
-
     virtualedit   = "all",
-
     viewoptions = "cursor,folds",
-
     splitkeep    = "screen", -- topline?
     shortmess    = "filmnrwxaoOstTWAIcCqFS",
-
     titlestring  = "[   UNEXPECTED NVIM   ]",
-
-    numberwidth  = 1,
     signcolumn   = "yes:1",
     statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '' %} ",
-
-    -- fillchars = "vert:⎹,vertleft:⎹,vertright:⎹,horiz:⸻,horizup:⸻,horizdown:⸻,fold: ,foldopen:│,foldclose:│,foldsep:│,eob:,msgsep:",
+    -- statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' }%*  ",
+    -- fillchars = "eob:,fold: ,foldsep:╎,foldopen:,foldclose:",
+    fillchars = "eob:,fold: ,foldsep:,foldopen:,foldclose:",
     listchars = "eol:⸥,space:·,trail:-,tab:--,nbsp:n,extends:e,precedes:+",
 }
 
@@ -56,9 +52,10 @@ for key, value in pairs(ui_options) do
 end
 
 require "ui.x-color"
+require "ui.fold"
 require "ui.tabline"
 require "ui.statusline"
 require "ui.indentline"
-require "ui.win-manager"
+-- require "ui.win-manager"
 require "ui.cmdline"
 require "ui.git"

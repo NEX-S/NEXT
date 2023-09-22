@@ -15,6 +15,9 @@ local hl_tbl = {
     PmenuSel     =        { bg = "#424242" },
     PmenuSbar    =        { bg = "#383838" },
 
+    Folded       =        { fg = "#404040", bg = "#222222" },
+    FoldColumn   =        { fg = "#484848" },
+
     GitAdd       =        { fg = "#AFC460" },
     GitMod       =        { fg = "#fe9b30" },
     GitDel       =        { fg = "#C53B82" },

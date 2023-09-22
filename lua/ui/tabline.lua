@@ -45,7 +45,7 @@ local function get_tab_page (tabnr, is_active)
 
     local tabpage = "%" .. tabnr .. "T" .. "%#InactiveTabSepL#" .. tabicon .. tabname .. modicon .. "%#InactiveTabSepR#"
 
-    return not is_active and tabpage or tabpage:gsub("Inactive", "Active"):gsub("", "", 1)
+    return not is_active and tabpage or tabpage:gsub("Inactive", "Active"):gsub('', '', 1)
 end
 
 _G.NVIM_TABLINE = function ()
