@@ -2,7 +2,7 @@
 
 require "modules.quick-select"
 require "modules.clipboard"
-require "modules.line-undo"
+require "modules.stack-undo"
 require "modules.terminal"
 require "modules.auto-complete"
 require "modules.auto-pair"
