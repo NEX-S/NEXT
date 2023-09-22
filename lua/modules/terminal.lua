@@ -38,6 +38,7 @@ local first_open = true
 
 local function on_float_stdout (_, data, _)
     for _, line in ipairs(data) do
+        -- TERM-RELATED
         local file = line:match(".+;nvim (%g+)%G.+")
         if file then
             -- api.nvim_feedkeys(
@@ -47,7 +48,7 @@ local function on_float_stdout (_, data, _)
             vim.defer_fn(function ()
                 api.nvim_win_hide(term_win_id)
                 api.nvim_command("tabnew " .. file)
-            end, 3)
+            end, 5)
         end
     end
 end
@@ -57,7 +58,7 @@ local function float_term ()
 
     if first_open then
         vim.fn.termopen("zsh", {
-            on_stdout = on_float_stdout,
+            -- on_stdout = on_float_stdout,
             on_exit = function ()
                 term_buf_nr = api.nvim_create_buf(false, true)
                 first_open = true
@@ -82,12 +83,13 @@ api.nvim_set_keymap('n', '`', '', {
         vim.fn.termopen("zsh", {
             on_stdout = function (_, data, _)
                 for _, line in ipairs(data) do
+                    -- TERM-RELATED
                     local file = line:match(".+;nvim (%g+)%G.+")
                     if file then
                         api.nvim_input(":quit!<CR>")
                         vim.defer_fn(function ()
                             api.nvim_command("tabnew " .. file)
-                        end, 3)
+                        end, 5)
                     end
                 end
             end,

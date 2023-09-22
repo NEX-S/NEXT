@@ -1,55 +1,35 @@
 local api = vim.api
 
 local options = {
-	smartcase = true,
-	ignorecase = true,
-	wildignorecase = true,
-
-	hidden = true,
-
-	magic = false,
-
-	smarttab = true,
-	expandtab = true,
-
-	smartindent = true,
-
-	startofline = false,
-	
-	writeany = true,
-	undofile = true,
-
-	autochdir = true,
-	wrapscan = false,
-
-	confirm = true,
-
-	backup = true,
-	writebackup = false,
-
-    backupdir = "/tmp",
-
-	swapfile = false,
-
-    -- false ?
-    autoread = true,
-
-    -- warn = false,
-    
-    tabstop = 4,
-    softtabstop = 4,
-    shiftwidth = 4,
-
-    history = 100,
-
-    shell = "/bin/bash",
-
-    mouse = 'a',
-
+    smartcase      = true,
+    ignorecase     = true,
+    wildignorecase = true,
+    hidden         = true,
+    smarttab       = true,
+    expandtab      = true,
+    smartindent    = true,
+    writeany       = true,
+    undofile       = true,
+    autochdir      = true,
+    confirm        = true,
+    autoread       = true,
+    backup         = true,
+    magic          = false,
+    startofline    = false,
+    wrapscan       = false,
+    swapfile       = false,
+    writebackup    = false,
+    -- warn        = false,
+    tabstop        = 4,
+    softtabstop    = 4,
+    shiftwidth     = 4,
+    history        = 100,
+    mouse          = 'a',
     formatoptions  = "rj",
+    backupdir      = "/tmp",
+    shell          = "/bin/bash",
 }
 
 for key, value in pairs(options) do
-	-- api.nvim_set_option_value(key, value, { scope = "global" })
-	api.nvim_set_option_value(key, value, {})
-end	
+    api.nvim_set_option_value(key, value, {})
+end
