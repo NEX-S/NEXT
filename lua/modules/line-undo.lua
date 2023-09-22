@@ -1,66 +1,34 @@
 local api = vim.api
 
-local first_ctrl_h = false
-local first_ctrl_h_pos = {}
-api.nvim_create_autocmd("InsertEnter", {
-    callback = function ()
-        first_ctrl_h = true
-        first_ctrl_h_pos = {}
-    end
-})
+local count = 0
 
 api.nvim_create_autocmd("InsertLeave", {
     callback = function ()
-        first_ctrl_h = false
-        first_ctrl_h_pos = {}
+        count = 0
     end
 })
 
 api.nvim_set_keymap('i', '<LEFT>', '', {
     callback = function ()
-        if first_ctrl_h then
-            first_ctrl_h = false
-            first_ctrl_h_pos = api.nvim_win_get_cursor(0)
-        end
+        count = count + 1
         return '<C-g>u<C-w>'
     end,
-    noremap = true,
     expr = true,
     replace_keycodes = true,
+    noremap = true,
 })
 
 api.nvim_set_keymap('i', '<RIGHT>', '', {
     callback = function ()
-        local cursor_pos = api.nvim_win_get_cursor(0)
-        if cursor_pos[1] == first_ctrl_h_pos[1] and cursor_pos[2] == first_ctrl_h_pos[2] then
-            return ''
+        if count == 0 then
+            return
         end
 
-        return '<CMD>normal!u<CR>'
+        count = count - 1
+
+        return "<CMD>normal! u<CR>"
     end,
-    noremap = true,
     expr = true,
     replace_keycodes = true,
+    noremap = true,
 })
-
--- local api = vim.api
--- 
--- local undo_stack = {}
--- 
--- local function push (str)
---     table.insert(undo_stack, str)
--- end
--- 
--- local function pop ()
---     return table.remove(undo_stack)
--- end
--- 
--- api.nvim_set_keymap('i', '<LEFT>', '', {
---     callback = function ()
---     end
--- })
--- 
--- api.nvim_set_keymap('i', '<RIGHT>', '', {
---     callback = function ()
---     end
--- })
