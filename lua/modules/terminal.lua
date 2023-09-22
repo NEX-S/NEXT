@@ -1,16 +1,5 @@
 local api = vim.api
 
-api.nvim_set_keymap('n', '`', '', {
-    callback = function ()
-        api.nvim_command("tabnew term://zsh | startinsert!")
-        api.nvim_set_option_value("statuscolumn", ' ', { scope = "local" })
-        api.nvim_set_option_value("signcolumn", 'no', { scope = "local" })
-        api.nvim_buf_set_keymap(0, 'n', '<ESC>', '<CMD>quit<CR>', {})
-    end
-})
-
-api.nvim_set_keymap('t', '<ESC>',  "<C-\\><C-n>", { noremap = true })
-
 function open_float_win (bufnr)
     local width  = api.nvim_get_option("columns")
     local height = api.nvim_get_option("lines")
@@ -43,17 +32,41 @@ function open_float_win (bufnr)
     return winid
 end
 
+local term_win_id = 0
 local term_buf_nr = api.nvim_create_buf(false, true)
 local first_open = true
+
+local function on_float_stdout (_, data, _)
+    for _, line in ipairs(data) do
+        local file = line:match(".+;nvim (%g+)%G.+")
+        if file then
+            -- api.nvim_feedkeys(
+            --     api.nvim_replace_termcodes(":quit!<CR>", true, true, true), 'n', false
+            -- )
+            api.nvim_input(":quit!<CR>")
+            vim.defer_fn(function ()
+                api.nvim_win_hide(term_win_id)
+                api.nvim_command("tabnew " .. file)
+            end, 3)
+        end
+    end
+end
+
 local function float_term ()
-    local term_win_id = open_float_win(term_buf_nr)
+    term_win_id = open_float_win(term_buf_nr)
 
     if first_open then
-        vim.fn.termopen("zsh", { on_exit = function () end})
+        vim.fn.termopen("zsh", {
+            on_stdout = on_float_stdout,
+            on_exit = function ()
+                term_buf_nr = api.nvim_create_buf(false, true)
+                first_open = true
+            end
+        })
         first_open = false
     end
 
-    api.nvim_command("startinsert!")
+    vim.bo.ft = "TERMINAL"
 
     api.nvim_buf_set_keymap(0, 't', '<ESC>', '', {
         callback = function ()
@@ -62,4 +75,45 @@ local function float_term ()
     })
 end
 
+api.nvim_set_keymap('n', '`', '', {
+    callback = function ()
+        api.nvim_command("tabnew")
+
+        vim.fn.termopen("zsh", {
+            on_stdout = function (_, data, _)
+                for _, line in ipairs(data) do
+                    local file = line:match(".+;nvim (%g+)%G.+")
+                    if file then
+                        api.nvim_input(":quit!<CR>")
+                        vim.defer_fn(function ()
+                            api.nvim_command("tabnew " .. file)
+                        end, 3)
+                    end
+                end
+            end,
+            on_exit = function ()
+                api.nvim_command("quit!")
+            end
+        })
+
+        vim.bo.ft = "TERMINAL"
+
+        api.nvim_set_option_value("statuscolumn", ' ', { scope = "local" })
+        api.nvim_set_option_value("signcolumn", 'no', { scope = "local" })
+        api.nvim_buf_set_keymap(0, 't', '<ESC>', '<CMD>quit<CR>', {})
+    end
+})
+
+-- api.nvim_set_keymap('t', '<ESC>',  "<C-\\><C-n>", { noremap = true })
+
 api.nvim_set_keymap('n', ",x", '', { callback = float_term })
+
+api.nvim_create_autocmd("WinEnter", {
+    callback = function ()
+        vim.defer_fn(function ()
+            if vim.bo.ft == "TERMINAL" then
+                api.nvim_command("startinsert!")
+            end
+        end, 5)
+    end
+})

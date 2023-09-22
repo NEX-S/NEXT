@@ -32,10 +32,10 @@ end
 api.nvim_set_keymap('i', '/', '', {
     callback = function ()
         if vim.fn.pumvisible() == 1 then
-            return key
+            return '/'
         end
 
-        return key .. "<C-x><C-f>"
+        return '/' .. "<C-x><C-f>"
     end,
     expr = true,
     replace_keycodes = true,
