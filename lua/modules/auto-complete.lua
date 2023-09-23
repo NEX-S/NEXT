@@ -29,18 +29,18 @@ for _, key in ipairs(key_tbl) do
     })
 end
 
-api.nvim_set_keymap('i', '/', '', {
-    callback = function ()
-        if vim.fn.pumvisible() == 1 then
-            return '/'
-        end
-
-        return '/' .. "<C-x><C-f>"
-    end,
-    expr = true,
-    replace_keycodes = true,
-    noremap = true,
-})
+-- api.nvim_set_keymap('i', '/', '', {
+--     callback = function ()
+--         if vim.fn.pumvisible() == 1 then
+--             return '/'
+--         end
+-- 
+--         return '/' .. "<C-x><C-f>"
+--     end,
+--     expr = true,
+--     replace_keycodes = true,
+--     noremap = true,
+-- })
 
 
 -- api.nvim_create_autocmd("InsertCharPre", {
@@ -62,10 +62,25 @@ api.nvim_set_keymap('i', '/', '', {
 --     end
 -- })
 
+-- todo: path_mode
+local path_mode = false
 local keymap_tbl = {
+    ['/'] = function ()
+        path_mode = true
+
+        if vim.fn.pumvisible() == 1 then
+            return '/'
+        end
+
+        return '/' .. "<C-x><C-f>"
+    end,
     ['<TAB>'] = function ()
         if vim.fn.pumvisible() == 1 then
             return '<C-n>'
+        end
+
+        if path_mode then
+            return "<C-x><C-f>"
         end
 
         return '<TAB>'
