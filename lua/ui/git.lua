@@ -4,7 +4,7 @@ vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
 vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
 vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
 
-api.nvim_create_autocmd("BufReadPost", {
+api.nvim_create_autocmd("DirChanged", {
     callback = function ()
         local io_handle = nil
 
@@ -23,6 +23,11 @@ api.nvim_create_autocmd("BufReadPost", {
         io_handle:close()
     end
 })
+
+api.nvim_exec_autocmds("DirChanged", {})
+
+
+-- api.nvim_command("doautocmd DirChanged")
 
 -- local function parse_diff_line (line)
 --     local diffkey = vim.trim(vim.split(line, '@@', { plain = true })[2])

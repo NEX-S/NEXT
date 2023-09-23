@@ -29,7 +29,7 @@ for key, value in pairs(quote_tbl) do
                 return '<RIGHT>'
             end
 
-            if cursor_rchr:match("%w") then
+            if cursor_rchr:match("[%w\"']") then
                 return value
             end
 
@@ -57,7 +57,7 @@ for key, value in pairs(bracket_tbl) do
             local cursor_line = api.nvim_get_current_line()
             local cursor_colm = api.nvim_win_get_cursor(0)[2] + 1
 
-            if cursor_line:sub(cursor_colm, cursor_colm):match("%w") then
+            if cursor_line:sub(cursor_colm, cursor_colm):match("[%w\"']") then
                 return key
             end
 

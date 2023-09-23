@@ -60,25 +60,31 @@ local function render_window_indent (re_render)
     end
 end
 
-api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
-    callback = render_window_indent
-})
+api.nvim_create_autocmd(
+    { "TextChanged", "TextChangedI" }, {
+        callback = render_window_indent
+    }
+)
 
-api.nvim_create_autocmd("InsertCharPre", {
-    callback = function ()
-        vim.defer_fn(function ()
-            render_window_indent()
-        end, 5)
-    end
-})
+api.nvim_create_autocmd(
+    "InsertCharPre", {
+        callback = function ()
+            vim.defer_fn(function ()
+                render_window_indent()
+            end, 5)
+        end
+    }
+)
 
-api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter", }, {
-    callback = function ()
-        vim.defer_fn(function ()
-            render_window_indent()
-        end, 10)
-    end
-})
+api.nvim_create_autocmd(
+    { "WinScrolled", "BufWinEnter", }, {
+        callback = function ()
+            vim.defer_fn(function ()
+                render_window_indent()
+            end, 20)
+        end
+    }
+)
 
 local function select_indent ()
     local cursor_indent = vim.fn.indent('.')
