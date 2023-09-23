@@ -4,15 +4,15 @@ local api = vim.api
 
 local fold_options = {
     foldenable   = true,
-    -- foldmethod   = "indent",
+    foldmethod   = "indent",
     foldminlines = 4,
     foldcolumn   = '1',
     foldtext     = "v:lua.FOLD_TEXT()",
     -- viewdir      = "~/.cache/nvim/view",
 
     -- treesitter fold
-    foldmethod = "expr",
-    foldexpr = "nvim_treesitter#foldexpr()",
+    -- foldmethod = "expr",
+    -- foldexpr = "nvim_treesitter#foldexpr()",
 }
 
 vim.opt.fillchars:append("fold: ,foldsep:╎,foldopen:~,foldclose:~")
