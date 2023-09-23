@@ -38,7 +38,7 @@ end
 
 local fzf_option  = " --tac --no-sort -m --scroll-off=2"
 local fzf_layout  = " --layout=reverse --border=none --info=inline-right --prompt=' ' --pointer='' --marker=''"
-local fzf_hl      = " --color='fg:#666666,bg+:#222222,fg+:#AFC460,query:#686868,info:#404040,prompt:#585858,pointer:#AFC460,border:#202020'"
+local fzf_hl      = " --color='fg:#666666,bg+:#222222,fg+:#AFC460,query:#686868,info:#343434,prompt:#585858,pointer:#AFC460,border:#202020'"
 local fzf_preview = " --preview='head -1000 {}' --preview-window='border-left,nowrap'"
 local fzf_keybind = " --bind=right:accept-non-empty,left:backward-kill-word,tab:preview-half-page-down"
 
@@ -56,11 +56,11 @@ local function open_fzf ()
         on_exit = function ()
             if not esc_exit then
                 local file = api.nvim_buf_get_lines(fzf_bufnr, 0, 1, false)[1]
-                api.nvim_win_close(fzf_winid, { force = true })
                 if file ~= '' then
                     -- ADD MORE ACTION?
                     api.nvim_command("tabnew " .. file)
                 end
+                api.nvim_win_close(fzf_winid, { force = true })
             end
         end
     })
