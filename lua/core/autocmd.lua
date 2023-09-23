@@ -11,9 +11,11 @@ api.nvim_create_autocmd("Filetype", {
     end,
 })
 
-api.nvim_create_autocmd("BufWinEnter", {
+api.nvim_create_autocmd("BufReadPost", {
     callback = function ()
         local last_pos = vim.fn.getpos("'\"")
-        pcall(api.nvim_win_set_cursor, { 0, { last_pos[2], last_pos[3] - 1 }})
+        api.nvim_win_set_cursor(0, { last_pos[2], last_pos[3] })
     end
 })
+
+

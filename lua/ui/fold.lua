@@ -27,5 +27,5 @@ end
 
 api.nvim_set_keymap('n', ' ', "za", { noremap = true })
 
--- api.nvim_create_autocmd("BufReadPost", { command = "silent! loadview" })
--- api.nvim_create_autocmd("BufWinLeave", { command = "silent! mkview" })
+api.nvim_create_autocmd("BufReadPost", { command = "silent! loadview" })
+api.nvim_create_autocmd("BufWinLeave", { command = "silent! mkview" })
