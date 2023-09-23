@@ -48,7 +48,6 @@ local function open_fzf ()
         and fzf_cmd or "find " .. _G.GIT_PATH .. " -type d -name .git -prune -o -type f -print |" .. fzf_cmd
 
     local action = "tabnew"
-
     vim.fn.termopen(fzf_cmd, {
         on_exit = function ()
             if not esc_exit then
@@ -64,18 +63,18 @@ local function open_fzf ()
     vim.bo.ft = "TERMINAL"
 
     local fzf_key = {
-        ["<ESC>"] = function ()
-            esc_exit = true
-            api.nvim_win_close(fzf_winid, { force = true })
-            api.nvim_buf_delete(fzf_bufnr, { force = true })
-        end,
+        ["<ESC>"] = vim.schedule_wrap(
+            function ()
+                esc_exit = true
+                api.nvim_win_close(fzf_winid, { force = true })
+                api.nvim_buf_delete(fzf_bufnr, { force = true })
+            end
+        ),
         ["<C-s>"] = function ()
-            action = "vsplit"
-            return "<CR>"
+            action = "vsplit" return "<CR>"
         end,
         ["<C-v>"] = function ()
-            action = "split"
-            return "<CR>"
+            action = "split" return "<CR>"
         end,
     }
 
