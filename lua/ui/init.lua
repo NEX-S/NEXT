@@ -42,8 +42,9 @@ local ui_options = {
     signcolumn   = "yes:1",
     statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '' %} ",
     -- statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' }%*  ",
-    -- fillchars = "eob:,fold: ,foldsep:╎,foldopen:,foldclose:",
-    fillchars = "eob:,fold: ,foldsep:,foldopen:,foldclose:",
+    -- fillchars = "eob:,fold: ,foldsep:,foldopen:,foldclose:",
+    -- fillchars = "eob:,fold: ,foldsep:,foldopen:,foldclose:",
+    fillchars = "eob:",
     listchars = "eol:⸥,space:·,trail:-,tab:--,nbsp:n,extends:e,precedes:+",
 }
 
