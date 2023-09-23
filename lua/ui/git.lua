@@ -4,16 +4,24 @@ vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
 vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
 vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
 
-local M = {}
+api.nvim_create_autocmd("DirChanged", {
+    callback = function ()
+        local io_handle = nil
 
-function M.get_git_branch()
-    local io_handle = io.popen("git branch --show-current 2> /dev/null", 'r')
-    local git_branch = io_handle:read()
+        io_handle = io.popen("git rev-parse --show-toplevel 2> /dev/null", 'r')
+        _G.GIT_PATH = io_handle:read()
+        io_handle:close()
 
-    io_handle:close()
+        if not _G.GIT_PATH then
+            _G.GIT_BRANCH = "UNKNOWN"
+            return
+        end
 
-    return git_branch == nil and "UNKNOWN" or git_branch
-end
+        io_handle = io.popen("git branch --show-current 2> /dev/null", 'r')
+        _G.GIT_BRANCH = io_handle:read()
+        io_handle:close()
+    end
+})
 
 -- local function parse_diff_line (line)
 --     local diffkey = vim.trim(vim.split(line, '@@', { plain = true })[2])
@@ -106,5 +114,3 @@ end
 --         vim.fn.sign_placelist(diff_result)
 --     end
 -- })
-
-return M

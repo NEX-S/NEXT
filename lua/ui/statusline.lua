@@ -1,7 +1,5 @@
 local api = vim.api
 
-local git = require "ui.git"
-
 -- FT_ICON
 ------------------------------------------
 -- local ft_icon = {
@@ -17,24 +15,13 @@ local git = require "ui.git"
 --     return ft_icon[vim.bo.ft] or ''
 -- end
 
-local cached_cwd = ""
-local cached_git_branch = ""
 _G.STATUSLINE_GIT = function ()
-    local current_cwd = vim.fn.getcwd()
-
-    if current_cwd == cached_cwd then
-        return cached_git_branch
-    end
-
-    cached_cwd = current_cwd
-    cached_git_branch = git.get_git_branch()
-
-    return cached_git_branch
+    return _G.GIT_BRANCH
 end
 
-
 local L_FT   = "%#StatusLineFT# %Y %#StatusLineFTSep#"
-local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit#  %{% v:lua.STATUSLINE_GIT() %} %#StatusLineGitSepR#"
+-- local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit#  %{% v:lua.STATUSLINE_GIT() %} %#StatusLineGitSepR#"
+local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit#  %{ v:lua.STATUSLINE_GIT() } %#StatusLineGitSepR#"
 -- local L_GIT  = "%#StatusLineGitSepL#%#StatusLineGit# GIT %#StatusLineGitSepR#"
 local L_PATH  = "%#StatusLinePathSepL#%#StatusLinePATH#%F %{% &modified ? '%#StatusLineMod# ' : '' %}%#StatusLinePathSepR#"
 
