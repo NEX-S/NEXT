@@ -4,7 +4,7 @@ vim.fn.sign_define("GitAdd", { text = '┃', texthl = "GitAdd" })
 vim.fn.sign_define("GitMod", { text = '┃', texthl = "GitMod" })
 vim.fn.sign_define("GitDel", { text = '', texthl = "GitDel" })
 
-api.nvim_create_autocmd("DirChanged", {
+api.nvim_create_autocmd("BufReadPost", {
     callback = function ()
         local io_handle = nil
 
@@ -13,6 +13,7 @@ api.nvim_create_autocmd("DirChanged", {
         io_handle:close()
 
         if not _G.GIT_PATH then
+            _G.GIT_PATH = ""
             _G.GIT_BRANCH = "UNKNOWN"
             return
         end

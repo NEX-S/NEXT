@@ -44,7 +44,7 @@ local function open_fzf ()
     local fzf_bufnr = api.nvim_create_buf(false, true)
     local fzf_winid = open_float_win(fzf_bufnr)
 
-    local fzf_cmd = _G.GIT_PATH == nil
+    local fzf_cmd = _G.GIT_PATH == ""
         and fzf_cmd or "find " .. _G.GIT_PATH .. " -type d -name .git -prune -o -type f -print |" .. fzf_cmd
 
     local action = "tabnew"
