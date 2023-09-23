@@ -1,6 +1,6 @@
 local api = vim.api
 
-function open_float_win (bufnr)
+local function open_float_win (bufnr)
     local width  = api.nvim_get_option("columns")
     local height = api.nvim_get_option("lines")
 
@@ -32,8 +32,8 @@ function open_float_win (bufnr)
     return winid
 end
 
-local term_win_id = 0
-local term_buf_nr = api.nvim_create_buf(false, true)
+local term_winid = 0
+local term_bufnr = api.nvim_create_buf(false, true)
 local first_open = true
 
 local function on_float_stdout (_, data, _)
@@ -46,7 +46,7 @@ local function on_float_stdout (_, data, _)
             -- )
             api.nvim_input(":quit!<CR>")
             vim.defer_fn(function ()
-                api.nvim_win_hide(term_win_id)
+                api.nvim_win_hide(term_winid)
                 api.nvim_command("tabnew " .. file)
             end, 5)
         end
@@ -54,13 +54,13 @@ local function on_float_stdout (_, data, _)
 end
 
 local function float_term ()
-    term_win_id = open_float_win(term_buf_nr)
+    term_winid = open_float_win(term_bufnr)
 
     if first_open then
         vim.fn.termopen("zsh", {
             -- on_stdout = on_float_stdout,
             on_exit = function ()
-                term_buf_nr = api.nvim_create_buf(false, true)
+                term_bufnr = api.nvim_create_buf(false, true)
                 first_open = true
             end
         })
@@ -71,7 +71,7 @@ local function float_term ()
 
     api.nvim_buf_set_keymap(0, 't', '<ESC>', '', {
         callback = function ()
-            api.nvim_win_hide(term_win_id)
+            api.nvim_win_hide(term_winid)
         end
     })
 end

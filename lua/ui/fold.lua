@@ -32,7 +32,9 @@ api.nvim_set_keymap('n', ' ', "za", { noremap = true })
 
 api.nvim_create_autocmd("BufReadPost", {
     callback = function ()
-        api.nvim_input("zR")
+        api.nvim_feedkeys(
+            api.nvim_replace_termcodes("zR", true, true, true), 'n', false
+        )
     end
 })
 
