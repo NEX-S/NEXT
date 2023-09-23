@@ -42,7 +42,7 @@ function M.open_messages_win (str)
         noautocmd = true,
     }
 
-    pcall(api.nvim_win_hide, messages_winid)
+    -- pcall(api.nvim_win_hide, messages_winid)
 
     messages_winid = api.nvim_open_win(messages_bufnr, false, win_config)
 
@@ -53,13 +53,13 @@ function M.open_messages_win (str)
 
     api.nvim_set_option_value("wrap", true, { win = messages_winid })
 
-    api.nvim_set_keymap('n', '<ESC>', '', {
-        callback = function ()
-            is_open = false
-            pcall(api.nvim_win_hide, messages_winid)
-            api.nvim_set_keymap('n', '<ESC>', ',', { noremap = true })
-        end
-    })
+    -- api.nvim_set_keymap('n', '<ESC>', '', {
+    --     callback = function ()
+    --         is_open = false
+    --         pcall(api.nvim_win_hide, messages_winid)
+    --         api.nvim_set_keymap('n', '<ESC>', ',', { noremap = true })
+    --     end
+    -- })
 
     return messages_winid
 end

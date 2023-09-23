@@ -3,6 +3,7 @@ local api = vim.api
 local extension_tbl = {
     ["lua"] = "lua",
     ["c"] = "c",
+    ["h"] = "c",
     ["py"] = "python",
     ["html"] = "html",
     ["s"] = "asm",
