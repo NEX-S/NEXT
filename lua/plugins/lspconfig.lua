@@ -116,6 +116,35 @@ function (_, result, _)
     util.jump_to_location(result[1], "utf-8", true)
 end
 
+local icons = {
+    Class       = "C",
+    Color       = "C",
+    Constant    = "C",
+    Constructor = "C",
+    Enum        = "E",
+    EnumMember  = "E",
+    Field       = "F",
+    File        = "F",
+    Folder      = "F",
+    Function    = "F",
+    Interface   = "I",
+    Keyword     = "K",
+    Method      = "M",
+    Module      = "M",
+    Property    = "P",
+    Snippet     = "S",
+    Struct      = "S",
+    Text        = "T",
+    Unit        = "U",
+    Value       = "V",
+    Variable    = "V",
+}
+
+local kinds = lsp.protocol.CompletionItemKind
+for i, kind in ipairs(kinds) do
+    kinds[i] = icons[kind] or kind
+end
+
 return {
     { "neovim/nvim-lspconfig",
         event = "BufWinEnter",
