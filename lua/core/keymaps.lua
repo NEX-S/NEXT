@@ -9,7 +9,7 @@ local n_mode = {
     ["L"] = "$",
 
     ["c"] = "s",
-    
+
     ["x"] = "<C-v>",
     ["s"] = "viw",
     ["S"] = "viW",
@@ -65,7 +65,7 @@ local n_mode = {
 
 for key, value in pairs(n_mode) do
     api.nvim_set_keymap('n', key, value, { noremap = true })
-end 
+end
 
 local x_mode = {
     ["J"] = "8gj",
@@ -87,7 +87,7 @@ local x_mode = {
 }
 
 for key, value in pairs(x_mode) do
-    api.nvim_set_keymap('x', key, value, { noremap = true })
+    api.nvim_set_keymap('x', key, value, { noremap = true, silent = true })
 end
 
 local n_func = {

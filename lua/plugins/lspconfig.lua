@@ -96,6 +96,10 @@ local servers =
                     library = { vim.env.VIMRUNTIME, },
                     checkThirdParty = false,
                 },
+                -- ?
+                -- completion = {
+                --     callSnippet = "Replace",
+                -- },
             },
         },
         root_dir = function()
@@ -146,11 +150,8 @@ for i, kind in ipairs(kinds) do
 end
 
 return {
-    { "neovim/nvim-lspconfig",
+    {  "neovim/nvim-lspconfig",
         event = "BufWinEnter",
-        opts = {
-            inlay_hints = { enabled = true },
-        },
         config = function()
             require "lspconfig".clangd.setup(servers.clangd)
             require "lspconfig".lua_ls.setup(servers.lua_ls)
