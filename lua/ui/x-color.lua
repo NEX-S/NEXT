@@ -80,6 +80,25 @@ local hl_tbl = {
     -- lsp will affect this, dont know why
     Identifier  = {},
     Comment  = {},
+    -- LspInlayHint = { fg = "#444444", bg = "#262626" },
+    LspInlayHint = { fg = "#383838" },
+
+    -- ["@lsp.type.class"]         = { fg = "#ffffff" },
+    -- ["@lsp.type.decorator"]     = { fg = "#ffffff" },
+    -- ["@lsp.type.enum"]          = { fg = "#ffffff" },
+    -- ["@lsp.type.enumMember"]    = { fg = "#ffffff" },
+    -- ["@lsp.type.function"]      = { fg = "#ffffff" },
+    -- ["@lsp.type.interface"]     = { fg = "#ffffff" },
+    -- ["@lsp.type.macro"]         = { fg = "#ffffff" },
+    -- ["@lsp.type.method"]        = { fg = "#ffffff" },
+    -- ["@lsp.type.namespace"]     = { fg = "#ffffff" },
+    -- ["@lsp.type.parameter"]     = { fg = "#ffffff" },
+    -- ["@lsp.type.property"]      = { fg = "#ffffff" },
+    -- ["@lsp.type.struct"]        = { fg = "#ffffff" },
+    -- ["@lsp.type.type"]          = { fg = "#ffffff" },
+    -- ["@lsp.type.typeParameter"] = { fg = "#ffffff" },
+    -- ["@lsp.type.variable"]      = { fg = "#ffffff" },
+
 }
 
 for key, value in pairs(hl_tbl) do

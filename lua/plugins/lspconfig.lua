@@ -17,29 +17,10 @@ vim.diagnostic.config {
     },
 }
 
--- local function lsp_attach (client, bufnr)
---     vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
--- 
---     lsp.semantic_tokens.start(bufnr, client)
--- 
---     local lsp_keymap = {
---         ["gd"] = vim.lsp.buf.definition,
---         ["gD"] = vim.lsp.buf.declaration,
---         ["gr"] = vim.lsp.buf.references,
---         ["gh"] = vim.lsp.buf.hover,
--- 
---         ["<A-f>"] = vim.lsp.buf.format,
---         ["<C-,>"] = vim.diagnostic.goto_prev,
---         ["<C-.>"] = vim.diagnostic.goto_next,
---         ["<C-r>"] = vim.lsp.buf.rename,
---     }
--- 
---     for key, value in pairs(lsp_keymap) do
---         api.nvim_buf_set_keymap(bufnr, 'n', key, '', { callback = value })
---     end
--- end
+local function lsp_attach (client, bufnr)
+    lsp.semantic_tokens.start(bufnr, client)
+end
 
-vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
 local lsp_keymap = {
     ["gd"] = vim.lsp.buf.definition,
@@ -64,12 +45,12 @@ local servers =
         inlay_hints = { enabled = true },
         cmd = {
             "clangd",
-            "--background-index",
-            "--header-insertion=iwyu",
-            "--clang-tidy",
+            -- "--background-index",
+            -- "--header-insertion=iwyu",
+            -- "--clang-tidy",
             -- "--completion-style=detailed",
             -- "--function-arg-placeholders",
-            "--fallback-style=llvm",
+            -- "--fallback-style=llvm",
         },
         capabilities = {
             offsetEncoding = { "utf-16" },
@@ -80,10 +61,21 @@ local servers =
     },
     lua_ls = {
         cmd = { "/home/nex/Downloads/lua-language-server-3.7.0-linux-x64/bin/lua-language-server" },
-        -- on_attach = lsp_attach,
+        on_attach = lsp_attach,
         inlay_hints = { enabled = true },
         settings = {
             Lua = {
+                hint = {
+                    enable = true,
+                    array_index = "Enable",
+                    setType = true,
+                },
+                semantic = {
+                    enable = true,
+                },
+                telemetry = {
+                    enable = false,
+                },
                 diagnostics = {
                     enable = true,
                     globals = { "vim" },
@@ -96,10 +88,11 @@ local servers =
                     library = { vim.env.VIMRUNTIME, },
                     checkThirdParty = false,
                 },
-                -- ?
-                -- completion = {
-                --     callSnippet = "Replace",
-                -- },
+                completion = {
+                    autoRequire = true,
+                    callSnippet = "Replace",
+                    displayContext = 1,
+                },
             },
         },
         root_dir = function()
@@ -120,34 +113,37 @@ function (_, result, _)
     util.jump_to_location(result[1], "utf-8", true)
 end
 
+-- 󰵈                       󰵈 󰇆 󰐡 󰔌 󱊔 
 local icons = {
-    Class       = "C",
-    Color       = "C",
-    Constant    = "C",
-    Constructor = "C",
-    Enum        = "E",
-    EnumMember  = "E",
-    Field       = "F",
-    File        = "F",
-    Folder      = "F",
-    Function    = "F",
-    Interface   = "I",
-    Keyword     = "K",
-    Method      = "M",
-    Module      = "M",
-    Property    = "P",
-    Snippet     = "S",
-    Struct      = "S",
-    Text        = "T",
-    Unit        = "U",
-    Value       = "V",
-    Variable    = "V",
+    Class       = "󰵈",
+    Color       = "󰵈",
+    Constant    = "󰇆",
+    Constructor = "",
+    Enum        = "",
+    EnumMember  = "󰵈",
+    Field       = "",
+    File        = "󰵈",
+    Folder      = "󰵈",
+    Function    = "󰵈",
+    Interface   = "󰵈",
+    Keyword     = "󰵈",
+    Method      = "",
+    Module      = "",
+    Property    = "󰵈",
+    Snippet     = "",
+    Struct      = "󰵈",
+    Text        = "",
+    Unit        = "󰵈",
+    Value       = "",
+    Variable    = "",
 }
 
 local kinds = lsp.protocol.CompletionItemKind
 for i, kind in ipairs(kinds) do
     kinds[i] = icons[kind] or kind
 end
+
+vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
 return {
     {  "neovim/nvim-lspconfig",
@@ -158,6 +154,7 @@ return {
 
             api.nvim_command("LspStart")
             api.nvim_create_autocmd("BufWinEnter", { command = "LspStart" })
+            lsp.inlay_hint(0, true)
         end
     }
 }

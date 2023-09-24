@@ -330,6 +330,7 @@ end
 
 local exclude_buftype = {
     ["help"] = true,
+    ["terminal"] = true,
 }
 
 api.nvim_create_autocmd("BufEnter", {

@@ -56,6 +56,7 @@ local function open_fzf ()
                     api.nvim_command(action .. ' ' .. file)
                 end
                 api.nvim_win_close(fzf_winid, { force = true })
+                api.nvim_buf_delete(fzf_bufnr, { force = true })
             end
         end
     })
