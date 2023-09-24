@@ -6,7 +6,7 @@ local hl_tbl = {
     SignColumn   =        { bg = "#202020" },
     LineNr       =        { fg = "#555555" },
     CursorLine   =        { bg = "#262626" },
-    CursorLineNr =        { fg = "#aee800" },
+    CursorLineNr =        { fg = "#8cb811" },
     Visual       =        { bg = "#303030" },
     Search       =        { fg = "#ccff36", bold = true },
     IncSearch    =        { fg = "#ccff36" },
@@ -67,6 +67,16 @@ local hl_tbl = {
     CmdLineBorder     =   { fg = "#9C8FDC" },
     FloatTerm         =   { fg = "#9C8FDC" },
     FloatTitle        =   { fg = "#464646" },
+
+    DiagnosticError       = { fg = "#FF43BA" },
+    DiagnosticWarn        = { fg = "#555555" },
+    DiagnosticInfo        = { fg = "#444444" },
+    DiagnosticHint        = { fg = "#383838" },
+    DiagnosticLineNrError = { fg = "#FF43BA" },
+    DiagnosticLineNrWarn  = { fg = "#FFA500" },
+    DiagnosticLineNrInfo  = { fg = "#EEEEEE" },
+    DiagnosticLineNrHint  = { fg = "#aee800" },
+
 }
 
 for key, value in pairs(hl_tbl) do
@@ -86,7 +96,7 @@ local ts_tbl = {
     ["@repeat"]             = { fg = "#868686" },
     ["@operator"]           = { fg = "#686868" },
     ["@punctuation"]        = { fg = "#585858" },
-    ["@constructor"]        = { fg = "#AFC460" },
+    ["@constructor"]        = { fg = "#9C8FDC" },
     ["@field"]              = { fg = "#585858" },
     ["@method"]             = { fg = "#9C8FDC" },
     ["@comment"]            = { fg = "#484848" },
