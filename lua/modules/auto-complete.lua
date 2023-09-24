@@ -14,14 +14,20 @@ local key_tbl = {
     '_', '#', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
 }
 
+_G.COMPLETE_PATH = false
 for _, key in ipairs(key_tbl) do
     api.nvim_set_keymap('i', key, '', {
         callback = function ()
             if vim.fn.pumvisible() == 1 then
                 return key
             end
-		
-            return key .. "<C-x><C-p>"
+
+            if _G.COMPLETE_PATH then
+                return key .. "<C-x><C-f>"
+            end
+
+            -- return key .. "<C-x><C-p>"
+            return key .. "<C-x><C-o>"
         end,
         expr = true,
         replace_keycodes = true,
@@ -62,24 +68,26 @@ end
 --     end
 -- })
 
--- todo: path_mode
-local path_mode = false
 local keymap_tbl = {
     ['/'] = function ()
-        path_mode = true
+        _G.COMPLETE_PATH = true
 
-        if vim.fn.pumvisible() == 1 then
-            return '/'
-        end
+        -- if vim.fn.pumvisible() == 1 then
+        --     return '/'
+        -- end
 
         return '/' .. "<C-x><C-f>"
     end,
+    -- [' '] = function ()
+    --     _G.COMPLETE_PATH = false
+    --     return ' '
+    -- end,
     ['<TAB>'] = function ()
         if vim.fn.pumvisible() == 1 then
             return '<C-n>'
         end
 
-        if path_mode then
+        if _G.COMPLETE_PATH then
             return "<C-x><C-f>"
         end
 
@@ -97,3 +105,9 @@ local keymap_tbl = {
 for key, value in pairs(keymap_tbl) do
     api.nvim_set_keymap('i', key, '', { callback = value, expr = true, replace_keycodes = true, noremap = true })
 end
+
+api.nvim_create_autocmd("InsertLeave", {
+    callback = function ()
+        _G.COMPLETE_PATH = false
+    end
+})

@@ -2,7 +2,7 @@
 return {
     { "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        event = "VimEnter",
+        event = "BufWinEnter",
         -- event = "BufReadPost",
         opts = {
             auto_install = false,

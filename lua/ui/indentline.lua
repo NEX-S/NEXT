@@ -25,7 +25,7 @@ local function get_indent_str (line_indent, shiftwidth)
     return indent_str
 end
 
-local function render_window_indent (re_render)
+local function render_window_indent ()
     local win_s_row = vim.fn.getpos("w0")[2] - 1
     local win_e_row = vim.fn.getpos("w$")[2]
 
@@ -53,6 +53,8 @@ local function render_window_indent (re_render)
                     { indent_str, "NonText" },
                 },
                 virt_text_pos = "overlay",
+                -- right_gravity = true,
+                -- ephemeral = true,
             })
         else
             prev_indent_str = ''
@@ -61,18 +63,8 @@ local function render_window_indent (re_render)
 end
 
 api.nvim_create_autocmd(
-    { "TextChanged", "TextChangedI" }, {
+    { "TextChanged", "TextChangedI", "InsertCharPre", }, {
         callback = render_window_indent
-    }
-)
-
-api.nvim_create_autocmd(
-    "InsertCharPre", {
-        callback = function ()
-            vim.defer_fn(function ()
-                render_window_indent()
-            end, 5)
-        end
     }
 )
 
@@ -81,7 +73,7 @@ api.nvim_create_autocmd(
         callback = function ()
             vim.defer_fn(function ()
                 render_window_indent()
-            end, 20)
+            end, 10)
         end
     }
 )
@@ -94,16 +86,31 @@ local function select_indent ()
     local e_row = s_row
 
     if cursor_indent == 0 then
-        for i = s_row - 1, 1, -1 do
+        local prev_pos = 1
+        for i = s_row, 1, -1 do
             local line_str = buf_line_tbl[i]
-            if line_str:match("^%s*$") then break end
-            s_row = s_row - 1
+            local char_pos = line_str:find("%S")
+
+            if char_pos == nil and prev_pos == 1 then
+                s_row = s_row + 1
+                break
+            else
+                prev_pos = char_pos
+                s_row = s_row - 1
+            end
         end
 
-        for i = e_row + 1, api.nvim_buf_line_count(0) do
+        for i = e_row, #buf_line_tbl do
             local line_str = buf_line_tbl[i]
-            if line_str:match("^%s*$") then break end
-            e_row = e_row + 1
+            local char_pos = line_str:find("%S")
+
+            if char_pos == nil and prev_pos == 1 then
+                e_row = e_row - 1
+                break
+            else
+                prev_pos = char_pos
+                e_row = e_row + 1
+            end
         end
     else
         for i = s_row - 1, 1, -1 do
@@ -124,6 +131,7 @@ local function select_indent ()
     end
 
     api.nvim_win_set_cursor(0, { s_row, 0 })
+
     local offset = e_row - s_row
 
     if offset == 0 then

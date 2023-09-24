@@ -60,7 +60,7 @@ end
 local servers =
 {
     clangd = {
-        on_attach = lsp_attach,
+        -- on_attach = lsp_attach,
         inlay_hints = { enabled = true },
         cmd = {
             "clangd",
@@ -80,7 +80,7 @@ local servers =
     },
     lua_ls = {
         cmd = { "/home/nex/Downloads/lua-language-server-3.7.0-linux-x64/bin/lua-language-server" },
-        on_attach = lsp_attach,
+        -- on_attach = lsp_attach,
         inlay_hints = { enabled = true },
         settings = {
             Lua = {

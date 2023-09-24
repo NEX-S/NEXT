@@ -17,7 +17,7 @@ local quote_tbl = {
     ['`'] = '`',
 }
 
-for key, value in pairs(quote_tbl) do
+for _, value in pairs(quote_tbl) do
     api.nvim_set_keymap('i', value, '', {
         callback = function ()
             local cursor_line = api.nvim_get_current_line()
@@ -25,7 +25,7 @@ for key, value in pairs(quote_tbl) do
 
             local cursor_rchr = cursor_line:sub(cursor_colm, cursor_colm)
 
-            if cursor_rchr == value then 
+            if cursor_rchr == value then
                 return '<RIGHT>'
             end
 
@@ -82,7 +82,7 @@ for _, key in ipairs(r_bracket_tbl) do
 
             local cursor_rchr = cursor_line:sub(cursor_colm, cursor_colm)
 
-            if cursor_rchr == key then 
+            if cursor_rchr == key then
                 return '<RIGHT>'
             end
 
@@ -107,25 +107,33 @@ local special_keymap = {
 
         if quote_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) % 2 == 0
-            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
+            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
         end
 
         if bracket_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) <= str_char_count(cursor_line, cursor_r)
-            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
+            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
         end
 
         if prev_char:match("[%w_-#]") then
-            return "<BS><C-x><C-z><C-x><C-p>"
+            if _G.COMPLETE_PATH then
+                return "<BS><C-x><C-z><C-x><C-f>"
+            end
+
+            return "<BS><C-x><C-z><C-x><C-o>"
+            -- return "<BS><C-x><C-z><C-x><C-p>"
         end
 
-        if prev_char == '/' then
-            return "<BS><C-x><C-z><C-x><C-f>"
-        end
+        -- if prev_char == '/' then
+        --     return "<BS><C-x><C-z><C-x><C-f>"
+        -- end
 
         return '<BS>'
     end,
     ["<CR>"] = function ()
+        _G.COMPLETE_PATH = false
         if vim.fn.pumvisible() == 1 then
             return '<C-x><C-z><CR>'
         end
@@ -157,7 +165,7 @@ local special_keymap = {
         return "<"
     end,
     [">"] = function ()
-        local ft = vim.bo.ft
+        -- local ft = vim.bo.ft
         local cursor_line = api.nvim_get_current_line()
         local cursor_colm = api.nvim_win_get_cursor(0)[2] + 1
 
