@@ -1,4 +1,5 @@
 local api = vim.api
+local lsp = vim.lsp
 
 vim.fn.sign_define("DiagnosticSignError", { text = '', texthl = "DiagnosticSignError", numhl = "DiagnosticLineNrError", linehl = "" })
 vim.fn.sign_define("DiagnosticSignWarn",  { text = '', texthl = "DiagnosticSignWarn",  numhl = "DiagnosticLineNrWarn",  linehl = "" })
@@ -16,24 +17,44 @@ vim.diagnostic.config {
     },
 }
 
-local function lsp_attach (client, bufnr)
-    vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+-- local function lsp_attach (client, bufnr)
+--     vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+-- 
+--     lsp.semantic_tokens.start(bufnr, client)
+-- 
+--     local lsp_keymap = {
+--         ["gd"] = vim.lsp.buf.definition,
+--         ["gD"] = vim.lsp.buf.declaration,
+--         ["gr"] = vim.lsp.buf.references,
+--         ["gh"] = vim.lsp.buf.hover,
+-- 
+--         ["<A-f>"] = vim.lsp.buf.format,
+--         ["<C-,>"] = vim.diagnostic.goto_prev,
+--         ["<C-.>"] = vim.diagnostic.goto_next,
+--         ["<C-r>"] = vim.lsp.buf.rename,
+--     }
+-- 
+--     for key, value in pairs(lsp_keymap) do
+--         api.nvim_buf_set_keymap(bufnr, 'n', key, '', { callback = value })
+--     end
+-- end
 
-    local lsp_keymap = {
-        ["gd"] = vim.lsp.buf.definition,
-        ["gD"] = vim.lsp.buf.declaration,
-        ["gr"] = vim.lsp.buf.references,
-        ["gh"] = vim.lsp.buf.hover,
+vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
-        ["<A-f>"] = vim.lsp.buf.format,
-        ["<C-,>"] = vim.diagnostic.goto_prev,
-        ["<C-.>"] = vim.diagnostic.goto_next,
-        ["<C-r>"] = vim.lsp.buf.rename,
-    }
+local lsp_keymap = {
+    ["gd"] = vim.lsp.buf.definition,
+    ["gD"] = vim.lsp.buf.declaration,
+    ["gr"] = vim.lsp.buf.references,
+    ["gh"] = vim.lsp.buf.hover,
 
-    for key, value in pairs(lsp_keymap) do
-        api.nvim_buf_set_keymap(bufnr, 'n', key, '', { callback = value })
-    end
+    ["<A-f>"] = vim.lsp.buf.format,
+    ["<C-,>"] = vim.diagnostic.goto_prev,
+    ["<C-.>"] = vim.diagnostic.goto_next,
+    ["<C-r>"] = vim.lsp.buf.rename,
+}
+
+for key, value in pairs(lsp_keymap) do
+    api.nvim_set_keymap('n', key, '', { callback = value })
 end
 
 local servers =
@@ -54,7 +75,7 @@ local servers =
             offsetEncoding = { "utf-16" },
         },
         root_dir = function()
-            return _G.GIT_PATH == "" or vim.fn.getcwd()
+            return _G.GIT_PATH == "" and vim.fn.getcwd() or _G.GIT_PATH
         end,
     },
     lua_ls = {
@@ -77,6 +98,9 @@ local servers =
                 },
             },
         },
+        root_dir = function()
+            return _G.GIT_PATH == "" and vim.fn.getcwd() or _G.GIT_PATH
+        end,
     }
 }
 
@@ -89,7 +113,7 @@ function (_, result, _)
     end
 
     api.nvim_command("tabnew")
-    util.jump_to_location(result[1])
+    util.jump_to_location(result[1], "utf-8", true)
 end
 
 return {

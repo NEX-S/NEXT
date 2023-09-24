@@ -77,6 +77,9 @@ local hl_tbl = {
     DiagnosticLineNrInfo  = { fg = "#EEEEEE" },
     DiagnosticLineNrHint  = { fg = "#aee800" },
 
+    -- lsp will affect this, dont know why
+    Identifier  = {},
+    Comment  = {},
 }
 
 for key, value in pairs(hl_tbl) do
