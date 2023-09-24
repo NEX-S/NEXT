@@ -302,7 +302,7 @@ end
 local shiftwidth = 0
 local function render_window_indent (_, _, bufnr, win_s_row, win_e_row)
     -- api.nvim_buf_clear_namespace(bufnr, namespace_id, win_s_row, win_e_row)
-    local line_tbl = api.nvim_buf_get_lines(bufnr, win_s_row, win_e_row, false)
+    local line_tbl = api.nvim_buf_get_lines(bufnr, win_s_row , win_e_row, false)
 
     local prev_indent_str = ''
     for i, str in ipairs(line_tbl) do
@@ -328,9 +328,24 @@ local function render_window_indent (_, _, bufnr, win_s_row, win_e_row)
     end
 end
 
+local exclude_buftype = {
+    ["help"] = true,
+}
+
 api.nvim_create_autocmd("BufEnter", {
     callback = function ()
         shiftwidth = api.nvim_get_option_value("shiftwidth", {})
-        api.nvim_set_decoration_provider(namespace_id, { on_win = render_window_indent, })
+        api.nvim_set_decoration_provider(namespace_id, {
+            on_start = function ()
+                local buftype = api.nvim_get_option_value("buftype", {
+                    buf = api.nvim_get_current_buf()
+                })
+
+                if exclude_buftype[buftype] then
+                    return false
+                end
+            end,
+            on_win = render_window_indent,
+        })
     end
 })
