@@ -6,6 +6,7 @@
 --                                                                  --
 
 vim.loader.enable()
+
 vim.o.undofile = false
 
 require "ft"  -- ~/.config/nvim/lua/ft/init.lua

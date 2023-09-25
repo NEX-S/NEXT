@@ -30,5 +30,3 @@ api.nvim_create_autocmd("ExitPre", {
         os.exit()
     end
 })
-
--- BufEnter is after BufWinEnter

@@ -21,6 +21,7 @@ local options = {
     writebackup    = false,
     -- warn        = false,
     tabstop        = 4,
+    regexpengine    = 2,
     softtabstop    = 4,
     shiftwidth     = 4,
     history        = 100,
