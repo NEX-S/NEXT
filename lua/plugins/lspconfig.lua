@@ -44,12 +44,12 @@ local servers =
         inlay_hints = { enabled = true },
         cmd = {
             "clangd",
-            -- "--background-index",
-            -- "--header-insertion=iwyu",
-            -- "--clang-tidy",
+            "--background-index",
+            "--header-insertion=iwyu",
+            "--clang-tidy",
             -- "--completion-style=detailed",
             -- "--function-arg-placeholders",
-            -- "--fallback-style=llvm",
+            "--fallback-style=llvm",
         },
         capabilities = {
             offsetEncoding = { "utf-16" },

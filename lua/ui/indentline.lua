@@ -338,15 +338,17 @@ local function select_indent ()
         end
     end
 
-    api.nvim_win_set_cursor(0, { s_row == 0 and 1 or s_row, 0 })
-
-    local offset = e_row - s_row
-
-    if offset == 0 then
-        api.nvim_feedkeys('vV', 'n', false)
-    else
-        api.nvim_feedkeys('vV' .. offset .. 'j', 'n', false)
-    end
+    vim.fn.setpos("'<", { 0, s_row, 1, 0 })
+    vim.fn.setpos("'>", { 0, e_row, 2147483647, 0 })
+    api.nvim_input("gv")
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
+
+api.nvim_set_keymap('n', ',,', '', {
+    callback = function ()
+        print(vim.inspect(vim.fn.getpos("'<")))
+        print(vim.inspect(vim.fn.getpos("'>")))
+    end
+})
+

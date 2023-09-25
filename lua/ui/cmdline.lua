@@ -48,7 +48,7 @@ function M.open_messages_win (str)
     messages_winid = api.nvim_open_win(messages_bufnr, false, win_config)
 
     is_open = true
-    vim.bo.ft = "MESSAGES"
+    api.nvim_set_option_value("filetype", "MESSAGES", { buf = messages_bufnr })
 
     api.nvim_set_option_value("winhl", "Normal:MessagesWin", { win = messages_winid })
     api.nvim_set_option_value("winblend", 15, { win = messages_winid })
