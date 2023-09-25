@@ -12,6 +12,7 @@ local M = {}
 local messages_winid = 0
 local messages_bufnr = api.nvim_create_buf(false, true)
 local is_open = false
+
 function M.open_messages_win (str)
 
     local str_tbl = str_to_tbl(str)
@@ -47,9 +48,10 @@ function M.open_messages_win (str)
     messages_winid = api.nvim_open_win(messages_bufnr, false, win_config)
 
     is_open = true
+    vim.bo.ft = "MESSAGES"
 
-    api.nvim_win_set_option(messages_winid, "winhl", "Normal:MessagesWin")
-    api.nvim_win_set_option(messages_winid, "winblend", 15)
+    api.nvim_set_option_value("winhl", "Normal:MessagesWin", { win = messages_winid })
+    api.nvim_set_option_value("winblend", 15, { win = messages_winid })
 
     api.nvim_set_option_value("wrap", true, { win = messages_winid })
 
@@ -110,8 +112,8 @@ local cmdline_winid = 0
 local cmdline_bufnr = api.nvim_create_buf(false, true)
 
 local function cmdline_init ()
-    api.nvim_buf_set_option(cmdline_bufnr, "buftype", "prompt")
-    api.nvim_buf_set_option(cmdline_bufnr, "omnifunc", "v:lua.CMDLINE_OMNIFUNC")
+    api.nvim_set_option_value("buftype", "prompt", { buf = cmdline_bufnr })
+    api.nvim_set_option_value("omnifunc", "v:lua.CMDLINE_OMNIFUNC", { buf = cmdline_bufnr })
 
     vim.fn.prompt_setprompt(cmdline_bufnr, "┃ ")
     vim.fn.prompt_setcallback(cmdline_bufnr,
@@ -166,8 +168,8 @@ local function open_cmdline_window ()
 
     cmdline_winid = api.nvim_open_win(cmdline_bufnr, true, win_config)
 
-    api.nvim_win_set_option(cmdline_winid, "winblend", 25)
-    api.nvim_win_set_option(cmdline_winid, "winhl", "Normal:CmdLine,FloatBorder:CmdLineBorder")
+    api.nvim_set_option_value("winblend", 25, { win = cmdline_winid })
+    api.nvim_set_option_value("winhl", "Normal:CmdLine,FloatBorder:CmdLineBorder", { win = cmdline_winid })
 end
 
 cmdline_init()

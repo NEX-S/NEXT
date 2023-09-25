@@ -38,5 +38,12 @@ api.nvim_create_autocmd("BufReadPost", {
     end
 })
 
--- api.nvim_create_autocmd("BufReadPost", { command = "loadview" })
+api.nvim_create_autocmd("BufReadPre", {
+    callback = vim.schedule_wrap(
+        function ()
+            api.nvim_command("silent! loadview")
+        end
+    )
+})
+
 -- api.nvim_create_autocmd("BufLeave", { command = "silent! mkview" })

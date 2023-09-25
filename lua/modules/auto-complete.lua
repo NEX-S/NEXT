@@ -22,7 +22,7 @@ for _, key in ipairs(key_tbl) do
                 return key
             end
 
-            return key .. (_G.COMPLETE_PATH == true and "<C-x><C-f" or "<C-x><C-p>")
+            return key .. (_G.COMPLETE_PATH == true and "<C-x><C-f>" or "<C-x><C-p>")
         end,
         expr = true,
         replace_keycodes = true,

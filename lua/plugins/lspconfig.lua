@@ -21,7 +21,6 @@ local function lsp_attach (client, bufnr)
     lsp.semantic_tokens.start(bufnr, client)
 end
 
-
 local lsp_keymap = {
     ["gd"] = vim.lsp.buf.definition,
     ["gD"] = vim.lsp.buf.declaration,
@@ -60,7 +59,7 @@ local servers =
         end,
     },
     lua_ls = {
-        cmd = { "/home/nex/Downloads/lua-language-server-3.7.0-linux-x64/bin/lua-language-server" },
+        cmd = { "/opt/lua-ls/bin/lua-language-server" },
         on_attach = lsp_attach,
         inlay_hints = { enabled = true },
         settings = {
@@ -147,14 +146,14 @@ vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
 return {
     {  "neovim/nvim-lspconfig",
-        event = "BufWinEnter",
+        event = "BufEnter",
         config = function()
             require "lspconfig".clangd.setup(servers.clangd)
             require "lspconfig".lua_ls.setup(servers.lua_ls)
 
             api.nvim_command("LspStart")
-            api.nvim_create_autocmd("BufWinEnter", { command = "LspStart" })
-            lsp.inlay_hint(0, true)
+            api.nvim_create_autocmd("BufEnter", { command = "LspStart" })
+            -- lsp.inlay_hint(0, true)
         end
     }
 }

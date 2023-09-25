@@ -338,7 +338,7 @@ local function select_indent ()
         end
     end
 
-    api.nvim_win_set_cursor(0, { s_row, 0 })
+    api.nvim_win_set_cursor(0, { s_row == 0 and 1 or s_row, 0 })
 
     local offset = e_row - s_row
 

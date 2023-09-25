@@ -27,3 +27,4 @@ end
 
 -- testsetset"sasetasdfasfas"asdfasfasfasfasfd"fsdafasfasfasdf"asdfasfasfasfd"fasdfasfasfasf"aaa
 api.nvim_set_keymap('n', 'm', '', { callback = quote_match, expr = true, noremap = true, })
+api.nvim_set_keymap('x', 'm', '', { callback = quote_match, expr = true, noremap = true, })
