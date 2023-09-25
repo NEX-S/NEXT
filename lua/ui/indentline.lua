@@ -77,71 +77,6 @@
 --         end
 --     }
 -- )
---
--- local function select_indent ()
---     local cursor_indent = vim.fn.indent('.')
---
---     local buf_line_tbl = api.nvim_buf_get_lines(0, 0, -1, false)
---     local s_row = api.nvim_win_get_cursor(0)[1]
---     local e_row = s_row
---
---     if cursor_indent == 0 then
---         local prev_pos = 1
---         for i = s_row, 1, -1 do
---             local line_str = buf_line_tbl[i]
---             local char_pos = line_str:find("%S")
---
---             if char_pos == nil and prev_pos == 1 then
---                 s_row = s_row + 1
---                 break
---             else
---                 prev_pos = char_pos
---                 s_row = s_row - 1
---             end
---         end
---
---         for i = e_row, #buf_line_tbl do
---             local line_str = buf_line_tbl[i]
---             local char_pos = line_str:find("%S")
---
---             if char_pos == nil and prev_pos == 1 then
---                 e_row = e_row - 1
---                 break
---             else
---                 prev_pos = char_pos
---                 e_row = e_row + 1
---             end
---         end
---     else
---         for i = s_row - 1, 1, -1 do
---             local line_str = buf_line_tbl[i]
---             if not line_str:match("^%s*$") then
---                 if line_str:find("%S") - 1 < cursor_indent then break end
---             end
---             s_row = s_row - 1
---         end
---
---         for i = e_row + 1, api.nvim_buf_line_count(0) do
---             local line_str = buf_line_tbl[i]
---             if not line_str:match("^%s*$") then
---                 if line_str:find("%S") - 1 < cursor_indent then break end
---             end
---             e_row = e_row + 1
---         end
---     end
---
---     api.nvim_win_set_cursor(0, { s_row, 0 })
---
---     local offset = e_row - s_row
---
---     if offset == 0 then
---         api.nvim_feedkeys('vV', 'n', false)
---     else
---         api.nvim_feedkeys('vV' .. offset .. 'j', 'n', false)
---     end
--- end
---
--- api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
 
 -----------------------------------------------------------------------------------------------------
 -- local api = vim.api
@@ -350,3 +285,68 @@ api.nvim_create_autocmd("BufEnter", {
         })
     end
 })
+
+local function select_indent ()
+    local cursor_indent = vim.fn.indent('.')
+
+    local buf_line_tbl = api.nvim_buf_get_lines(0, 0, -1, false)
+    local s_row = api.nvim_win_get_cursor(0)[1]
+    local e_row = s_row
+
+    if cursor_indent == 0 then
+        local prev_pos = 1
+        for i = s_row, 1, -1 do
+            local line_str = buf_line_tbl[i]
+            local char_pos = line_str:find("%S")
+
+            if char_pos == nil and prev_pos == 1 then
+                s_row = s_row + 1
+                break
+            else
+                prev_pos = char_pos
+                s_row = s_row - 1
+            end
+        end
+
+        for i = e_row, #buf_line_tbl do
+            local line_str = buf_line_tbl[i]
+            local char_pos = line_str:find("%S")
+
+            if char_pos == nil and prev_pos == 1 then
+                e_row = e_row - 1
+                break
+            else
+                prev_pos = char_pos
+                e_row = e_row + 1
+            end
+        end
+    else
+        for i = s_row - 1, 1, -1 do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
+                if line_str:find("%S") - 1 < cursor_indent then break end
+            end
+            s_row = s_row - 1
+        end
+
+        for i = e_row + 1, api.nvim_buf_line_count(0) do
+            local line_str = buf_line_tbl[i]
+            if not line_str:match("^%s*$") then
+                if line_str:find("%S") - 1 < cursor_indent then break end
+            end
+            e_row = e_row + 1
+        end
+    end
+
+    api.nvim_win_set_cursor(0, { s_row, 0 })
+
+    local offset = e_row - s_row
+
+    if offset == 0 then
+        api.nvim_feedkeys('vV', 'n', false)
+    else
+        api.nvim_feedkeys('vV' .. offset .. 'j', 'n', false)
+    end
+end
+
+api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })

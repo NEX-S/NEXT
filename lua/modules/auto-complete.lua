@@ -22,32 +22,13 @@ for _, key in ipairs(key_tbl) do
                 return key
             end
 
-            if _G.COMPLETE_PATH then
-                return key .. "<C-x><C-f>"
-            end
-
-            -- return key .. "<C-x><C-p>"
-            return key .. "<C-x><C-o>"
+            return key .. (_G.COMPLETE_PATH == true and "<C-x><C-f" or "<C-x><C-p>")
         end,
         expr = true,
         replace_keycodes = true,
         noremap = true,
     })
 end
-
--- api.nvim_set_keymap('i', '/', '', {
---     callback = function ()
---         if vim.fn.pumvisible() == 1 then
---             return '/'
---         end
--- 
---         return '/' .. "<C-x><C-f>"
---     end,
---     expr = true,
---     replace_keycodes = true,
---     noremap = true,
--- })
-
 
 -- api.nvim_create_autocmd("InsertCharPre", {
 --     callback = function ()
@@ -72,23 +53,11 @@ local keymap_tbl = {
     ['/'] = function ()
         _G.COMPLETE_PATH = true
 
-        -- if vim.fn.pumvisible() == 1 then
-        --     return '/'
-        -- end
-
         return '/' .. "<C-x><C-f>"
     end,
-    -- [' '] = function ()
-    --     _G.COMPLETE_PATH = false
-    --     return ' '
-    -- end,
     ['<TAB>'] = function ()
         if vim.fn.pumvisible() == 1 then
             return '<C-n>'
-        end
-
-        if _G.COMPLETE_PATH then
-            return "<C-x><C-f>"
         end
 
         return '<TAB>'

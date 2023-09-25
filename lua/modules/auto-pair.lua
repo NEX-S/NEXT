@@ -107,23 +107,23 @@ local special_keymap = {
 
         if quote_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) % 2 == 0
-            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
-            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
+            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-p>" or '')
         end
 
         if bracket_tbl[cursor_l] == cursor_r and
             str_char_count(cursor_line, cursor_l) <= str_char_count(cursor_line, cursor_r)
-            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
-            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-p>" or '')
+            -- then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-z><C-x><C-o>" or '')
+            then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-p>" or '')
         end
 
         if prev_char:match("[%w_-#]") then
             if _G.COMPLETE_PATH then
-                return "<BS><C-x><C-z><C-x><C-f>"
+                return "<BS><C-x><C-f>"
             end
 
-            return "<BS><C-x><C-z><C-x><C-o>"
-            -- return "<BS><C-x><C-z><C-x><C-p>"
+            -- return "<BS><C-x><C-o>"
+            return "<BS><C-x><C-z><C-x><C-p>"
         end
 
         -- if prev_char == '/' then
