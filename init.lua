@@ -6,6 +6,7 @@
 --                                                                  --
 
 vim.loader.enable()
+vim.o.undofile = false
 
 require "ft"  -- ~/.config/nvim/lua/ft/init.lua
 require "ui"  -- ~/.config/nvim/lua/ui/init.lua
@@ -13,7 +14,7 @@ require "ui"  -- ~/.config/nvim/lua/ui/init.lua
 require "plugins"       -- ~/.config/nvim/lua/plugins/init.lua
 require "core.autocmd"  -- ~/.config/nvim/lua/core/autocmd.lua
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
+vim.api.nvim_create_autocmd("BufEnter", {
     once = true,
     callback = function ()
         require "core.options"  -- ~/.config/nvim/lua/core/options.lua

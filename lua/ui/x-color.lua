@@ -6,7 +6,8 @@ local hl_tbl = {
     SignColumn   =        { bg = "#202020" },
     LineNr       =        { fg = "#555555" },
     CursorLine   =        { bg = "#262626" },
-    CursorLineNr =        { fg = "#8cb811" },
+    -- CursorLineNr =        { fg = "#8cb811" },
+    CursorLineNr =        { fg = "#aee800" },
     Visual       =        { bg = "#303030" },
     Search       =        { fg = "#ccff36", bold = true },
     IncSearch    =        { fg = "#ccff36" },
@@ -17,6 +18,8 @@ local hl_tbl = {
 
     Folded       =        { fg = "#404040", bg = "#222222" },
     FoldColumn   =        { fg = "#484848" },
+
+    MatchParen   =        { fg = "#aee800" },
 
     GitAdd       =        { fg = "#AFC460" },
     GitMod       =        { fg = "#fe9b30" },
