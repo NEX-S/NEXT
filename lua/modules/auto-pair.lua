@@ -95,6 +95,22 @@ for _, key in ipairs(r_bracket_tbl) do
 end
 
 
+local search_tbl = {
+    ['a'] = true, ['b'] = true, ['c'] = true, ['d'] = true, ['e'] = true,
+    ['f'] = true, ['g'] = true, ['h'] = true, ['i'] = true, ['j'] = true,
+    ['k'] = true, ['l'] = true, ['m'] = true, ['n'] = true, ['o'] = true,
+    ['p'] = true, ['q'] = true, ['r'] = true, ['s'] = true, ['t'] = true,
+    ['u'] = true, ['v'] = true, ['w'] = true, ['x'] = true, ['y'] = true,
+    ['z'] = true, ['A'] = true, ['B'] = true, ['C'] = true, ['D'] = true,
+    ['E'] = true, ['F'] = true, ['G'] = true, ['H'] = true, ['I'] = true,
+    ['J'] = true, ['K'] = true, ['L'] = true, ['M'] = true, ['N'] = true,
+    ['O'] = true, ['P'] = true, ['Q'] = true, ['R'] = true, ['S'] = true,
+    ['T'] = true, ['U'] = true, ['V'] = true, ['W'] = true, ['X'] = true,
+    ['Y'] = true, ['Z'] = true, ['_'] = true, ['#'] = true, ['0'] = true,
+    ['1'] = true, ['2'] = true, ['3'] = true, ['4'] = true, ['5'] = true,
+    ['6'] = true, ['7'] = true, ['8'] = true, ['9'] = true
+}
+
 local special_keymap = {
     ["<BS>"] = function ()
         local cursor_line = api.nvim_get_current_line()
@@ -117,17 +133,16 @@ local special_keymap = {
             then return "<BS><DEL>" .. (prev_char:match("[%w_-]") and "<C-x><C-p>" or '')
         end
 
-        if prev_char:match("[%w_-#]") then
-            if _G.COMPLETE_PATH then
-                return "<BS><C-x><C-f>"
-            end
-
-            -- return "<BS><C-x><C-o>"
-            return "<BS><C-x><C-z><C-x><C-p>"
+        if _G.COMPLETE_PATH then
+            return "<BS><C-x><C-f>"
         end
 
-        -- if prev_char == '/' then
-        --     return "<BS><C-x><C-z><C-x><C-f>"
+        if search_tbl[prev_char] then
+            -- need to use debounce optimize here
+            return "<BS><C-x><C-z><C-x><C-p>"
+        end
+        -- if prev_char:match("[%w_-#]") then
+        --     return "<BS><C-x><C-z><C-x><C-p>"
         -- end
 
         return '<BS>'

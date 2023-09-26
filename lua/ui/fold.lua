@@ -29,21 +29,3 @@ _G.FOLD_TEXT = function ()
 end
 
 api.nvim_set_keymap('n', ' ', "za", { noremap = true })
-
-api.nvim_create_autocmd("BufReadPost", {
-    callback = function ()
-        api.nvim_feedkeys(
-            api.nvim_replace_termcodes("zR", true, true, true), 'n', false
-        )
-    end
-})
-
-api.nvim_create_autocmd("BufReadPre", {
-    callback = vim.schedule_wrap(
-        function ()
-            api.nvim_command("silent! loadview")
-        end
-    )
-})
-
--- api.nvim_create_autocmd("BufLeave", { command = "silent! mkview" })

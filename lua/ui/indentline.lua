@@ -269,7 +269,7 @@ local exclude_buftype = {
 }
 
 api.nvim_create_autocmd("BufEnter", {
-    callback = function ()
+    callback = vim.schedule_wrap(function ()
         shiftwidth = api.nvim_get_option_value("shiftwidth", {})
         api.nvim_set_decoration_provider(namespace_id, {
             on_start = function ()
@@ -283,7 +283,7 @@ api.nvim_create_autocmd("BufEnter", {
             end,
             on_win = render_window_indent,
         })
-    end
+    end)
 })
 
 local function select_indent ()
@@ -344,11 +344,3 @@ local function select_indent ()
 end
 
 api.nvim_set_keymap('x', 'ii', '', { callback = select_indent })
-
-api.nvim_set_keymap('n', ',,', '', {
-    callback = function ()
-        print(vim.inspect(vim.fn.getpos("'<")))
-        print(vim.inspect(vim.fn.getpos("'>")))
-    end
-})
-

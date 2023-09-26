@@ -17,6 +17,7 @@ return {
         },
         config = function (plugin, opts)
             require "nvim-treesitter.configs".setup(opts)
+            require "plugins.TS.textobjects"
         end
     }
 }
