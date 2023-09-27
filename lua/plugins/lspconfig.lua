@@ -55,7 +55,7 @@ local servers =
             offsetEncoding = { "utf-16" },
         },
         root_dir = function()
-            return _G.GIT_PATH == "" and vim.fn.getcwd() or _G.GIT_PATH
+            return _G.GIT_PATH == "" and vim.fn.expand("%:p:h") or _G.GIT_PATH
         end,
     },
     lua_ls = {
@@ -95,7 +95,7 @@ local servers =
             },
         },
         root_dir = function()
-            return _G.GIT_PATH == "" and vim.fn.getcwd() or _G.GIT_PATH
+            return _G.GIT_PATH == "" and vim.fn.expand("%:p:h") or _G.GIT_PATH
         end,
     }
 }

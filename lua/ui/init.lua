@@ -33,11 +33,11 @@ local ui_options = {
     synmaxcol     = 140,
     redrawtime    = 100,
 
+    shortmess = "atIoOTcF",
     mousemodel = "extend",
     virtualedit   = "all",
     viewoptions = "cursor,folds",
     splitkeep    = "screen", -- topline?
-    shortmess    = "filmnrwxaoOstTWAIcCqFS",
     titlestring  = "[   UNEXPECTED NVIM   ]",
     signcolumn   = "yes:1",
     -- statuscolumn = "%s%=%#LineNr#%{ v:virtnum == v:false ? printf('%X', v:lnum) : '↳' } %*%{% foldlevel(v:lnum) ? '%C' : '' %} ",

@@ -57,7 +57,7 @@ local function float_term ()
     term_winid = open_float_win(term_bufnr)
 
     if first_open then
-        vim.fn.termopen("zsh", {
+        vim.fn.termopen("fish", {
             -- on_stdout = on_float_stdout,
             on_exit = function ()
                 term_bufnr = api.nvim_create_buf(false, true)
@@ -80,7 +80,7 @@ api.nvim_set_keymap('n', '`', '', {
     callback = function ()
         api.nvim_command("tabnew")
 
-        vim.fn.termopen("zsh", {
+        vim.fn.termopen("fish", {
             on_stdout = function (_, data, _)
                 for _, line in ipairs(data) do
                     -- TERM-RELATED

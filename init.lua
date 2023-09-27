@@ -5,6 +5,8 @@
 --  \____/_/ |_/_____//_/|_/_/   /_____/\____/ /_/ /_____/_____/    --
 --                                                                  --
 
+local api = vim.api
+
 vim.loader.enable()
 
 vim.o.undofile = false
@@ -15,7 +17,7 @@ require "ui"  -- ~/.config/nvim/lua/ui/init.lua
 require "plugins"       -- ~/.config/nvim/lua/plugins/init.lua
 require "core.autocmd"  -- ~/.config/nvim/lua/core/autocmd.lua
 
-vim.api.nvim_create_autocmd("BufEnter", {
+api.nvim_create_autocmd("BufEnter", {
     once = true,
     callback = function ()
         require "core.options"  -- ~/.config/nvim/lua/core/options.lua

@@ -55,13 +55,12 @@ function M.open_messages_win (str)
 
     api.nvim_set_option_value("wrap", true, { win = messages_winid })
 
-    -- api.nvim_set_keymap('n', '<ESC>', '', {
-    --     callback = function ()
-    --         is_open = false
-    --         pcall(api.nvim_win_hide, messages_winid)
-    --         api.nvim_set_keymap('n', '<ESC>', ',', { noremap = true })
-    --     end
-    -- })
+    api.nvim_buf_set_keymap(messages_bufnr, 'n', '<ESC>', '', {
+        callback = function ()
+            is_open = false
+            pcall(api.nvim_win_hide, messages_winid)
+        end
+    })
 
     return messages_winid
 end
