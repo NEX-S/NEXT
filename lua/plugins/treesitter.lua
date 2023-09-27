@@ -6,7 +6,7 @@ return {
         -- event = "BufReadPost",
         opts = {
             auto_install = false,
-            ensure_installed = { "lua", "c", "python", "markdown", "json" },
+            ensure_installed = { "lua", "c", "python", "markdown", "json", "php" },
             sync_install = false,
             highlight = {
                 enable = true,

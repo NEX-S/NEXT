@@ -1,15 +1,14 @@
 
-
 require "modules.quick-select"
 require "modules.clipboard"
 require "modules.stack-undo"
 require "modules.terminal"
-require "modules.auto-complete"
+require "modules.complete"
 require "modules.auto-pair"
 require "modules.comments"
 require "modules.switch"
 require "modules.run-code"
-require "modules.auto-align"
-require "modules.char-match"
+require "modules.align"
+require "modules.jump-pair"
 require "modules.surround"
 require "modules.fzf"

@@ -78,6 +78,8 @@ local ft_cmd_tbl = {
         end
     end,
     ["c"] = "gcc $FILEPATH -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
+    ["python"] = "python3 $FILEPATH",
+    ["php"] = "php $FILEPATH",
 }
 
 local function run_code ()

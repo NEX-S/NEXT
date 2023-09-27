@@ -2,6 +2,7 @@ local api = vim.api
 
 local cms_tbl = {
     ["lua"] = "%-%-",
+    ["php"] = "//",
     ["c"] = "//",
     ["python"] = "#",
 }

@@ -242,10 +242,18 @@ local function render_window_indent (_, _, bufnr, win_s_row, win_e_row)
     local prev_indent_str = ''
     for i, str in ipairs(line_tbl) do
         local line_indent = str:find("%S")
-
         if line_indent ~= 1 then
-            local indent_str = line_indent == nil
-                and prev_indent_str or get_indent_str(line_indent - 1, shiftwidth)
+            if line_indent == nil then
+                indent_str = prev_indent_str
+            else
+                indent_str = get_indent_str(
+                    vim.fn.foldclosed(win_s_row + i) ~= -1 and line_indent - shiftwidth or line_indent - 1,
+                    shiftwidth
+                )
+            end
+
+            -- local indent_str = line_indent == nil
+            --     and prev_indent_str or get_indent_str(line_indent - 1, shiftwidth)
 
             prev_indent_str = indent_str
 

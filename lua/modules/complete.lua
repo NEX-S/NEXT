@@ -51,9 +51,11 @@
 
 local api = vim.api
 
+
+
 local keymap_tbl = {
     ['/'] = function ()
-        _G.COMPLETE_PATH = true
+        _G.COMPLETE_PATH = vim.bo.ft ~= "html"
         return '/' .. "<C-x><C-f>"
     end,
     ['<TAB>'] = function ()
@@ -97,6 +99,23 @@ local search_tbl = {
     ['1'] = true, ['2'] = true, ['3'] = true, ['4'] = true, ['5'] = true,
     ['6'] = true, ['7'] = true, ['8'] = true, ['9'] = true
 }
+
+-- for key, _ in pairs(search_tbl) do
+--     api.nvim_set_keymap('i', key, '', {
+--         callback = function ()
+--             if vim.fn.pumvisible() == 1 then
+--                 return key
+--             end
+-- 
+--             return key .. (_G.COMPLETE_PATH == true and "<C-x><C-f>" or "<C-x><C-p>")
+--         end,
+--         expr = true,
+--         replace_keycodes = true,
+--         noremap = true
+--     })
+-- end
+
+
 
 vim.o.infercase   = false
 vim.o.completeopt = "menu,menuone,noselect,noinsert"
