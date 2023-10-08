@@ -3,7 +3,7 @@ local api = vim.api
 local hl_tbl = {
     Normal       =        { bg = "#222222", fg = "#cccccc" },
     NonText      =        { fg = "#303030" },
-    SignColumn   =        { bg = "#202020" },
+    SignColumn   =        { bg = "#222222" },
     LineNr       =        { fg = "#555555" },
     CursorLine   =        { bg = "#262626" },
     -- CursorLineNr =        { fg = "#8cb811" },

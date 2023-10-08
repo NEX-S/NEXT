@@ -1,21 +1,20 @@
 local api = vim.api
 
-_G.NVIM_TABLINE_NEWTAB = function() api.nvim_command("tabnew") end
-_G.NVIM_TABLINE_NEXTAB = function() api.nvim_command("tabnext") end
-_G.NVIM_TABLINE_EXITAB = function(tabnr)
+_G.NVIM_TABLINE_NEWTAB = function () api.nvim_command("tabnew") end
+_G.NVIM_TABLINE_NEXTAB = function () api.nvim_command("tabnext") end
+_G.NVIM_TABLINE_EXITAB = function (tabnr)
     tabnr = tabnr == 0 and '' or tabnr
-    nvcmd = vim.fn.tabpagenr('$') == 1 and "quitall!" or "tabclose " .. tabnr
-    api.nvim_command(nvcmd)
+    api.nvim_command(
+        vim.fn.tabpagenr('$') == 1 and "quitall!" or "tabclose " .. tabnr
+    )
 end
 
 local function get_ft_icon (ft)
     local ft_icon = {
         lua  = "  ",
         vim  = "  ",
-        html = "  ",
         c    = "  ",
-        php  = " ▼ ",
-        markdown = "   ",
+        php  = "  ",
     }
 
     return "%#InactiveTabFtIcon# " .. (ft_icon[ft] or ' ')
@@ -23,7 +22,8 @@ end
 
 local function get_close_icon (tabnr, buflist)
     for _, bufnr in ipairs(buflist) do
-        if api.nvim_buf_get_option(bufnr, "mod") == true then
+        -- if api.nvim_buf_get_option(bufnr, "mod") == true then
+        if api.nvim_get_option_value("mod", { buf = bufnr }) then
             return "%#InactiveTabMod#  "
         end
     end
@@ -37,7 +37,7 @@ local function get_tab_page (tabnr, is_active)
     local buflist = vim.fn.tabpagebuflist(tabnr)
 
     local modicon = get_close_icon(tabnr, buflist)
-    local tabicon = get_ft_icon(api.nvim_buf_get_option(buflist[1], "filetype"))
+    local tabicon = get_ft_icon(api.nvim_get_option_value("filetype", { buf = buflist[1] }))
 
     local tabname = api.nvim_buf_get_name(buflist[1])
 
