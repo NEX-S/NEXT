@@ -1,8 +1,8 @@
 local api = vim.api
 
 local function open_float_win (bufnr)
-    local width  = api.nvim_get_option("columns")
-    local height = api.nvim_get_option("lines")
+    local width  = api.nvim_get_option_value("columns", {})
+    local height = api.nvim_get_option_value("lines", {})
 
     local win_width  = math.ceil(width  * 0.7)
     local win_height = math.ceil(height * 0.7)
@@ -26,8 +26,8 @@ local function open_float_win (bufnr)
 
     local winid = api.nvim_open_win(bufnr, true, win_config)
 
-    api.nvim_win_set_option(winid, "winhl", "Normal:FloatTerm")
-    api.nvim_win_set_option(winid, "winblend", 15)
+    api.nvim_set_option_value("winhl", "Normal:FloatTerm", { win = winid })
+    api.nvim_set_option_value("winblend", 15, { win = winid })
 
     return winid
 end
@@ -37,20 +37,20 @@ local term_bufnr = api.nvim_create_buf(false, true)
 local first_open = true
 
 local function on_float_stdout (_, data, _)
-    for _, line in ipairs(data) do
-        -- TERM-RELATED
-        local file = line:match(".+;nvim (%g+)%G.+")
-        if file then
-            -- api.nvim_feedkeys(
-            --     api.nvim_replace_termcodes(":quit!<CR>", true, true, true), 'n', false
-            -- )
-            api.nvim_input(":quit!<CR>")
-            vim.defer_fn(function ()
-                api.nvim_win_hide(term_winid)
-                api.nvim_command("tabnew " .. file)
-            end, 5)
-        end
-    end
+    -- for _, line in ipairs(data) do
+    --     -- TERM-RELATED
+    --     local file = line:match(".+;nvim (%g+)%G.+")
+    --     if file then
+    --         -- api.nvim_feedkeys(
+    --         --     api.nvim_replace_termcodes(":quit!<CR>", true, true, true), 'n', false
+    --         -- )
+    --         api.nvim_input(":quit!<CR>")
+    --         vim.defer_fn(function ()
+    --             api.nvim_win_hide(term_winid)
+    --             api.nvim_command("tabnew " .. file)
+    --         end, 5)
+    --     end
+    -- end
 end
 
 local function float_term ()
@@ -82,16 +82,16 @@ api.nvim_set_keymap('n', '`', '', {
 
         vim.fn.termopen("fish", {
             on_stdout = function (_, data, _)
-                for _, line in ipairs(data) do
-                    -- TERM-RELATED
-                    local file = line:match(".+;nvim (%g+)%G.+")
-                    if file then
-                        api.nvim_input(":quit!<CR>")
-                        vim.defer_fn(function ()
-                            api.nvim_command("tabnew " .. file)
-                        end, 5)
-                    end
-                end
+                -- for _, line in ipairs(data) do
+                --     -- TERM-RELATED
+                --     local file = line:match(".+;nvim (%g+)%G.+")
+                --     if file then
+                --         api.nvim_input(":quit!<CR>")
+                --         vim.defer_fn(function ()
+                --             api.nvim_command("tabnew " .. file)
+                --         end, 5)
+                --     end
+                -- end
             end,
             on_exit = function ()
                 api.nvim_command("quit!")

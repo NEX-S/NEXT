@@ -34,7 +34,7 @@ end
 local fzf_option  = " --exact --no-sort -m --scroll-off=2"
 local fzf_layout  = " --layout=reverse --border=none --info=inline-right --prompt=' ' --pointer='' --marker=''"
 local fzf_hl      = " --color='fg:#666666,bg+:#222222,fg+:#AFC460,query:#686868,info:#343434,prompt:#585858,pointer:#AFC460,border:#202020'"
-local fzf_preview = " --preview='head -1000 {}' --preview-window='border-left,nowrap'"
+local fzf_preview = " --preview='head -100 {}' --preview-window='border-left,nowrap'"
 local fzf_keybind = " --bind=right:accept-non-empty,left:backward-kill-word,tab:preview-half-page-down"
 
 local fzf_cmd = "fzf" .. fzf_option .. fzf_layout .. fzf_hl .. fzf_preview .. fzf_keybind
@@ -44,7 +44,7 @@ local function open_fzf ()
     local fzf_bufnr = api.nvim_create_buf(false, true)
     local fzf_winid = open_float_win(fzf_bufnr)
 
-    local fzf_cmd = _G.GIT_PATH == ""
+    fzf_cmd = _G.GIT_PATH == ""
         and fzf_cmd or "find " .. _G.GIT_PATH .. " -type d -name .git -prune -o -type f -print |" .. fzf_cmd
 
     local action = "tabnew"
@@ -55,7 +55,7 @@ local function open_fzf ()
                 if file ~= '' then
                     api.nvim_command(action .. ' ' .. file)
                 end
-                api.nvim_win_close(fzf_winid, { force = true })
+                api.nvim_win_close(fzf_winid, true)
                 api.nvim_buf_delete(fzf_bufnr, { force = true })
             end
         end

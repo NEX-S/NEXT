@@ -11,8 +11,8 @@ api.nvim_create_autocmd("Filetype", {
     end,
 })
 
-api.nvim_create_autocmd("BufLeave", { command = "silent! mkview!" })
-api.nvim_create_autocmd("BufEnter", { command = "silent! loadview" })
+api.nvim_create_autocmd("BufWinLeave", { command = "silent! mkview!" })
+api.nvim_create_autocmd("BufWinEnter", { command = "silent! loadview" })
 
 -- api.nvim_create_autocmd("BufEnter", {
 --     callback = function ()
