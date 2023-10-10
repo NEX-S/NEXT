@@ -119,7 +119,7 @@ local search_tbl = {
 
 vim.o.infercase   = false
 vim.o.completeopt = "menu,menuone,noselect,noinsert"
-vim.o.updatetime = 30
+vim.o.updatetime = 50
 api.nvim_create_autocmd("CursorHoldI", {
     callback = function ()
         if vim.fn.pumvisible() == 1 then

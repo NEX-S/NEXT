@@ -10,6 +10,7 @@ local extension_tbl = {
     ["asm"] = "asm",
     ["txt"] = "text",
     ["php"] = "php",
+    ["http"] = "http",
 }
 
 local function ft_detect ()

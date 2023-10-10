@@ -77,5 +77,38 @@ local function toggle_select_comment ()
     api.nvim_buf_set_lines(0, s_row, e_row, false, select_tbl)
 end
 
+local function select_comment ()
+    local cms = cms_tbl[vim.bo.ft]
+
+    local buffer_lines = api.nvim_buf_get_lines(0, 0, -1, false)
+    local cursor_row = api.nvim_win_get_cursor(0)[1]
+
+    local s_row = cursor_row
+    local e_row = cursor_row
+
+    for i = s_row, 1, -1 do
+        if not buffer_lines[i]:match("^%s*" .. cms) then
+            s_row = i + 1
+            break
+        end
+    end
+
+    for i = e_row, #buffer_lines do
+        if not buffer_lines[i]:match("^%s*" .. cms) then
+            e_row = i - 1
+            break
+        end
+    end
+
+    if s_row - 1 == e_row + 1 then
+        return
+    end
+
+    vim.fn.setpos("'<", { 0, s_row, 1, 0 })
+    vim.fn.setpos("'>", { 0, e_row, 2147483647, 0 })
+    api.nvim_input("gv")
+end
+
 api.nvim_set_keymap('n', ",c", '', { callback = toggle_line_comment })
 api.nvim_set_keymap('x', ",c", '', { callback = toggle_select_comment })
+api.nvim_set_keymap('x', "ic", '', { callback = select_comment })
