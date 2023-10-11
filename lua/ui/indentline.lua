@@ -294,6 +294,7 @@ api.nvim_create_autocmd("BufEnter", {
     end)
 })
 
+-- vip can replace vii when indent = 0
 local function select_indent ()
     local cursor_indent = vim.fn.indent('.')
 

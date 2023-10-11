@@ -11,7 +11,6 @@ end
 local response_winid = -1
 local response_bufnr = api.nvim_create_buf(false, true)
 local function open_response_win (http_response)
-
     api.nvim_buf_set_lines(
         response_bufnr, 0, -1, false, str_to_tbl(http_response:gsub('\r', ''))
     )
@@ -46,7 +45,7 @@ end
 local function parse_url (url)
     url = url:gsub("^https?://", '')
 
-    local host, port, path, method, post_data = string.match(url, "([^:/]+):?(%d*)/?(%g*)%s?(%g*)%s?(.*)")
+    local host, port, path, method, post_data = string.match(url, "([^/^ ]+):?(%d*)/?(%g*)%s?(%g*)%s?(.*)")
 
     if port == '' then
         port = 80
@@ -56,7 +55,11 @@ local function parse_url (url)
         method = "GET"
     end
 
-    print(host, port, path, string.upper(method), post_data)
+    -- print("host: ", host)
+    -- print("port: ", port)
+    -- print("path: ", path)
+    -- print("method: ", method)
+    -- print("post_data: ", post_data)
 
     return host, port, path, string.upper(method), post_data
 end
@@ -109,7 +112,7 @@ local function async_send_request (server_addr, server_port, http_request)
         end
     )
 
-    uv.write(stdin, http_request, function ()
+    uv.write(stdin, http_request:gsub("\\n", '\n'), function ()
         stdin:shutdown()
         stdin:close()
     end)
@@ -142,7 +145,7 @@ function M.send_request ()
     async_send_request(
         server_addr,
         server_port,
-        table.concat(http_request, '\r\n') .. "\r\n\r\n"
+        table.concat(http_request, "\r\n") .. "\r\n\r\n"
     )
 
     -- vim.system({ "nc", server_addr, server_port }, { stdin = buffer_content, text = true },
