@@ -58,9 +58,10 @@ local n_mode = {
 
     ["<C-f>"] = "/",
     ["<C-/>"] = "ggVG$",
+    ["<C-i>"] = "mfgg=G`m",
 
     -- file action
-    ["gf"] = "<CMD>tabnew <cfile><CR>"
+    ["gf"] = "<CMD>tabnew <cfile><CR>",
 }
 
 for key, value in pairs(n_mode) do
@@ -84,6 +85,7 @@ local x_mode = {
     ["p"] = 'd"yP',
     ["<C-p>"] = 'd"dP',
     ["<C-r>"] = '"ay<CMD>let @/=@a<CR>cgn',
+    ["<C-i>"] = "=gv",
 }
 
 for key, value in pairs(x_mode) do
@@ -117,7 +119,14 @@ local n_func = {
         end
 
         return "<C-w>v"
-    end
+    end,
+    ["<C-i>"] = vim.schedule_wrap(
+        function ()
+            local view = vim.fn.winsaveview()
+            api.nvim_command("silent!normal! gg=G")
+            vim.fn.winrestview(view)
+        end
+    ),
 }
 
 for key, value in pairs(n_func) do
