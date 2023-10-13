@@ -26,7 +26,6 @@ local n_mode = {
     ["y"] = '"yy',
     ["p"] = '"yp',
 
-    ["/"] = "<CMD>set hls!<CR>",
 
     -- ["<C-;>"] = "<CMD>set hls!<CR>",
     -- ["\\"] = "<CMD>set hls!<CR>",
@@ -44,6 +43,7 @@ local n_mode = {
     ["<C-c>"] = "cc",
     ["<C-w>"] = "<CMD>write ++p<CR>",
     ["<C-q>"] = "<CMD>quit!<CR>",
+    ["<C-x>"] = '<CMD>qa!<CR>',
     ["<C-p>"] = '"dp',
 
     ["<C-h>"] = "gT",
@@ -56,7 +56,9 @@ local n_mode = {
     ["<DOWN>"] = "<C-i>",
     ["<UP>"] = "<C-o>",
 
-    ["<C-f>"] = "/",
+    -- ["<C-f>"] = "/",
+    -- ["/"] = "<CMD>set hls!<CR>",
+    ["<CR>"] = "<CMD>set hls!<CR>",
     ["<C-/>"] = "ggVG$",
     ["<C-i>"] = "mfgg=G`m",
 

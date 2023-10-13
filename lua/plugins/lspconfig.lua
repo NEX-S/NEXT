@@ -18,7 +18,7 @@ vim.diagnostic.config {
 }
 
 local function lsp_attach (client, bufnr)
-    lsp.semantic_tokens.start(bufnr, client)
+    -- lsp.semantic_tokens.start(bufnr, client)
 end
 
 local lsp_keymap = {

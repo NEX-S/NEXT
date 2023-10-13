@@ -12,3 +12,5 @@ require "modules.align"
 require "modules.jump-pair"
 require "modules.surround"
 require "modules.fzf"
+
+require "modules.http-request"

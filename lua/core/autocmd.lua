@@ -12,7 +12,14 @@ api.nvim_create_autocmd("Filetype", {
 })
 
 api.nvim_create_autocmd("BufWinLeave", { command = "silent! mkview!" })
-api.nvim_create_autocmd("BufWinEnter", { command = "silent! loadview" })
+api.nvim_create_autocmd("BufWinEnter", {
+    callback = vim.schedule_wrap(function ()
+        if vim.bo.ft == "help" then
+            return
+        end
+        api.nvim_command("silent! loadview")
+    end)
+})
 
 -- api.nvim_create_autocmd("BufEnter", {
 --     callback = function ()

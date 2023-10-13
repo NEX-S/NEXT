@@ -51,8 +51,6 @@
 
 local api = vim.api
 
-
-
 local keymap_tbl = {
     ['/'] = function ()
         _G.COMPLETE_PATH = vim.bo.ft ~= "html"
@@ -115,11 +113,10 @@ local search_tbl = {
 --     })
 -- end
 
-
-
 vim.o.infercase   = false
 vim.o.completeopt = "menu,menuone,noselect,noinsert"
-vim.o.updatetime = 50
+vim.o.complete    = "."
+vim.o.updatetime = 40
 api.nvim_create_autocmd("CursorHoldI", {
     callback = function ()
         if vim.fn.pumvisible() == 1 then

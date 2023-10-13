@@ -80,7 +80,6 @@ local ft_cmd_tbl = {
     ["c"] = "gcc $FILEPATH -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
     ["python"] = "python3 $FILEPATH",
     ["php"] = "php $FILEPATH",
-    ["http"] = require "modules.http-request".send_request,
     -- ["http"] = "cat $FILEPATH | nc httpbin.org 80",
 }
 

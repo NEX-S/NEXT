@@ -77,6 +77,7 @@ local function toggle_select_comment ()
     api.nvim_buf_set_lines(0, s_row, e_row, false, select_tbl)
 end
 
+-- maybe vip can replace this?
 local function select_comment ()
     local cms = cms_tbl[vim.bo.ft]
 
