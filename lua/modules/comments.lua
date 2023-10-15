@@ -5,6 +5,7 @@ local cms_tbl = {
     ["php"] = "//",
     ["c"] = "//",
     ["python"] = "#",
+    ["rust"] = "//",
 }
 
 local function toggle_line_comment ()

@@ -11,6 +11,8 @@ local extension_tbl = {
     ["txt"] = "text",
     ["php"] = "php",
     ["http"] = "http",
+    ["rs"] = "rust",
+    ["zig"] = "zig",
 }
 
 local function ft_detect ()

@@ -91,6 +91,7 @@ local function http_request_layout_init ()
         api.nvim_set_option_value('statuscolumn', ' ', {})
         api.nvim_set_option_value('signcolumn', 'no', {})
         api.nvim_set_option_value('number', false, {})
+        vim.bo.ft = "http"
     end
 
     http_layout.url.bufnr = api.nvim_create_buf(false, true)
@@ -117,6 +118,9 @@ local function http_request_layout_init ()
     api.nvim_set_option_value("buftype", "prompt", { buf = http_layout.url.bufnr })
     vim.fn.prompt_setprompt(http_layout.url.bufnr, " ")
     set_win_options()
+
+    -- api.nvim_set_option_value('ft', "http", { buf = http_layout.req.bufnr })
+    -- api.nvim_set_option_value('ft', "http", { buf = http_layout.res.bufnr })
 
     api.nvim_command("startinsert!")
 
@@ -174,4 +178,4 @@ local function http_request_layout_init ()
     })
 end
 
-api.nvim_create_user_command("REP", http_request_layout_init, {})
+api.nvim_create_user_command("HTTP", http_request_layout_init, {})

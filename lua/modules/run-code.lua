@@ -77,7 +77,7 @@ local ft_cmd_tbl = {
             open_messages_win(output)
         end
     end,
-    ["c"] = "gcc $FILEPATH -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
+    ["c"] = "gcc $FILEPATH -lm -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
     ["python"] = "python3 $FILEPATH",
     ["php"] = "php $FILEPATH",
     -- ["http"] = "cat $FILEPATH | nc httpbin.org 80",
