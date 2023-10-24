@@ -55,32 +55,51 @@ local function generate_http_request (server_addr, server_port, server_path, req
     return http_request
 end
 
-local uv = vim.loop
-local function send_request_async (server_addr, server_port, request_content, callback)
-    local stdin  = uv.new_pipe()
-    local stdout = uv.new_pipe()
+-- local function send_request_async (server_addr, server_port, request_content, callback)
+--     local stdin  = uv.new_pipe()
+--     local stdout = uv.new_pipe()
+-- 
+--     local handle = nil
+--     handle = uv.spawn("nc", {
+--         args = { server_addr, server_port },
+--         stdio = { stdin, stdout, nil },
+--     },
+--         function ()
+--             stdout:read_stop()
+--             stdout:close()
+--             handle:close()
+--         end
+--     )
+-- 
+--     uv.write(stdin, request_content, function ()
+--         stdin:shutdown()
+--         stdin:close()
+--     end)
+-- 
+--     uv.read_start(stdout, function (_, data)
+--         if data ~= nil and data:match("^HTTP") then
+--             vim.schedule_wrap(callback)(data)
+--         end
+--     end)
+-- end
 
-    local handle = nil
-    handle = uv.spawn("nc", {
-        args = { server_addr, server_port },
-        stdio = { stdin, stdout, nil },
-    },
-        function ()
-            stdout:read_stop()
-            stdout:close()
-            handle:close()
-        end
-    )
+local function send_request_async(server_addr, server_port, request_content, callback)
+    vim.loop.getaddrinfo(server_addr, nil, { socktype = vim.loop.SOCK_STREAM }, function(err, res)
+        local server_ip = res[1].addr
+        local tcp = vim.loop.new_tcp()
 
-    uv.write(stdin, request_content, function ()
-        stdin:shutdown()
-        stdin:close()
-    end)
-
-    uv.read_start(stdout, function (_, data)
-        if data ~= nil and data:match("^HTTP") then
-            vim.schedule_wrap(callback)(data)
-        end
+        tcp:connect(server_ip, server_port, function(err)
+            tcp:write(request_content, function(err)
+                tcp:shutdown(function()
+                    tcp:read_start(function(err, data)
+                        tcp:close()
+                        if data then
+                            vim.schedule_wrap(callback)(data)
+                        end
+                    end)
+                end)
+            end)
+        end)
     end)
 end
 
@@ -170,7 +189,7 @@ local function http_request_layout_init ()
 
             send_request_async(server_addr, server_port, table.concat(http_request, "\r\n"),
                 function (data)
-                    local http_response = string.split(data:gsub('\r', ''), '\n')
+                    local http_response = string.split(data:gsub('\r\n', '\n'), '\n')
                     api.nvim_buf_set_lines(http_layout.res.bufnr, 0, -1, false, http_response)
                 end
             )

@@ -17,6 +17,12 @@ require "ui"  -- ~/.config/nvim/lua/ui/init.lua
 require "plugins"       -- ~/.config/nvim/lua/plugins/init.lua
 require "core.autocmd"  -- ~/.config/nvim/lua/core/autocmd.lua
 
+-- vim.defer_fn(function ()
+--     require "core.options"  -- ~/.config/nvim/lua/core/options.lua
+--     require "core.keymaps"  -- ~/.config/nvim/lua/core/keymaps.lua
+--     require "modules"       -- ~/.config/nvim/lua/modules/init.lua
+-- end, 70)
+
 api.nvim_create_autocmd("BufEnter", {
     once = true,
     callback = function ()

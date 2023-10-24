@@ -13,6 +13,8 @@ local extension_tbl = {
     ["http"] = "http",
     ["rs"] = "rust",
     ["zig"] = "zig",
+    ["ts"] = "typescript",
+    ["js"] = "javascript",
 }
 
 local function ft_detect ()
