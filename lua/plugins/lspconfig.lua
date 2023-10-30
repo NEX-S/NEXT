@@ -100,17 +100,18 @@ local servers =
     }
 }
 
-vim.lsp.handlers["textDocument/definition"] =
-function (_, result, _)
-    local util = vim.lsp.util
-
-    if result == nil or next(result) == nil then
-        return
-    end
-
-    api.nvim_command("tabnew")
-    util.jump_to_location(result[1], "utf-8", true)
-end
+-- fixme: check if is in same buffer --> true: jump to location / false : tabnew ....
+-- vim.lsp.handlers["textDocument/definition"] =
+-- function (_, result, _)
+--     local util = vim.lsp.util
+-- 
+--     if result == nil or next(result) == nil then
+--         return
+--     end
+-- 
+--     api.nvim_command("tabnew")
+--     util.jump_to_location(result[1], "utf-8", true)
+-- end
 
 -- 󰵈                       󰵈 󰇆 󰐡 󰔌 󱊔 
 local icons = {

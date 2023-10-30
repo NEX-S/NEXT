@@ -31,8 +31,8 @@ local function open_vert_win (bufnr)
 
     local winid = api.nvim_open_win(bufnr, true, win_config)
 
-    api.nvim_win_set_option(winid, "winhl", "Normal:RunCodeWin")
-    api.nvim_win_set_option(winid, "winblend", 15)
+    api.nvim_set_option_value("winhl", "Normal:RunCodeWin", { win = winid })
+    api.nvim_set_option_value("winblend", 15, { win = winid })
 
     return winid
 end
@@ -80,6 +80,8 @@ local ft_cmd_tbl = {
     ["c"] = "gcc $FILEPATH -lm -o /tmp/nvim-run-code/$FILENAME.bin && time /tmp/nvim-run-code/$FILENAME.bin",
     ["python"] = "python3 $FILEPATH",
     ["php"] = "php $FILEPATH",
+    ["javascript"] = "node $FILEPATH",
+    ["typescript"] = "ts-node $FILEPATH",
     -- ["http"] = "cat $FILEPATH | nc httpbin.org 80",
 }
 
