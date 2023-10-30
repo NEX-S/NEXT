@@ -13,4 +13,6 @@ require "modules.jump-pair"
 require "modules.surround"
 require "modules.fzf"
 
+-- require "modules.hex"
+
 require "modules.http-request"

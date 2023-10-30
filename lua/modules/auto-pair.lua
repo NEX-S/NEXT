@@ -73,12 +73,24 @@ for key, value in pairs(bracket_tbl) do
     })
 end
 
-local r_bracket_tbl = { ")", "]", "}" }
-for _, key in ipairs(r_bracket_tbl) do
+local r_bracket_tbl = {
+    [")"] = "(",
+    ["]"] = "[",
+    ["}"] = "{",
+}
+
+for key, value in pairs(r_bracket_tbl) do
     api.nvim_set_keymap('i', key, '', {
         callback = function ()
             local cursor_line = api.nvim_get_current_line()
             local cursor_colm = api.nvim_win_get_cursor(0)[2] + 1
+
+            local l_count = str_char_count(cursor_line, value)
+            local r_count = str_char_count(cursor_line, key)
+
+            if l_count > r_count then
+                return key
+            end
 
             local cursor_rchr = cursor_line:sub(cursor_colm, cursor_colm)
 
