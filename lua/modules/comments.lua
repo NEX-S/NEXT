@@ -6,6 +6,9 @@ local cms_tbl = {
     ["c"] = "//",
     ["python"] = "#",
     ["rust"] = "//",
+
+    ["javascript"] = "//",
+    ["typescript"] = "//",
 }
 
 local function toggle_line_comment ()

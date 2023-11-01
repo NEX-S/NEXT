@@ -25,6 +25,10 @@ for _, value in pairs(quote_tbl) do
 
             local cursor_rchr = cursor_line:sub(cursor_colm, cursor_colm)
 
+            if str_char_count(cursor_line, value) % 2 == 1 then
+                return value
+            end
+
             if cursor_rchr == value then
                 return '<RIGHT>'
             end
