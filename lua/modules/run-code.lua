@@ -82,7 +82,6 @@ local ft_cmd_tbl = {
     ["php"] = "php $FILEPATH",
     ["javascript"] = "node $FILEPATH",
     ["typescript"] = "ts-node $FILEPATH",
-    -- ["http"] = "cat $FILEPATH | nc httpbin.org 80",
 }
 
 local function run_code ()
@@ -105,11 +104,11 @@ local function run_code ()
 
     api.nvim_command("startinsert!")
 
-    api.nvim_buf_set_keymap(run_code_bufnr, 't', '<ESC>', '', {
-        callback = function ()
-            api.nvim_win_hide(run_code_winid)
-        end
-    })
+    -- api.nvim_buf_set_keymap(run_code_bufnr, 'n', '<ESC>', '', {
+    --     callback = function ()
+    --         api.nvim_win_hide(run_code_winid)
+    --     end
+    -- })
 end
 
 api.nvim_set_keymap('n', ",r", '', { callback = run_code })

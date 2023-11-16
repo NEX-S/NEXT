@@ -5,6 +5,7 @@ local cms_tbl = {
     ["php"] = "//",
     ["c"] = "//",
     ["python"] = "#",
+    ["bash"] = "#",
     ["rust"] = "//",
 
     ["javascript"] = "//",

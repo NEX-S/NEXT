@@ -52,9 +52,6 @@
 --     })
 -- end
 -- 
--- -- (sadfasdfsadf(aaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbb)aaaaaaaaaaaaaaaaa)bvvv)
--- -- aaaaaaaaaaaa(sadfasfasdfsaf)asdfasdfasdf(dasfasfdasfd)asddfasfsadf(sdafasdfasfd)saddfasfasdf(dsafasdfasdf)
--- aaaaa"aaaaaaaaaaaaa"aaaaaaaaaaaaaaaaaaaaa"bbbbbbbbbbbbbbbbbbbbbb"bbbbbbbbbbbbbbbbbbBB"ccccccccccccccccccccccC"ccccccccccccc
 
 local api = vim.api
 
@@ -78,7 +75,7 @@ local x_map = {
         local cursor_colm = api.nvim_win_get_cursor(0)[2] + 1
         local cursor_char = cursor_line:sub(cursor_colm, cursor_colm)
 
-        return cursor_char == '"' and 'vlvi"' or 'vva"'
+        return cursor_char == '"' and 'vlvi"' or 'vlvF"o'
     end,
 
     ["'"] = function ()
@@ -86,7 +83,7 @@ local x_map = {
         local cursor_colm = api.nvim_win_get_cursor(0)[2] + 1
         local cursor_char = cursor_line:sub(cursor_colm, cursor_colm)
 
-        return cursor_char == "'" and "vlvi'" or "vva'"
+        return cursor_char == "'" and "vlvi'" or "vlvF'o"
     end,
 
     ["("] = function ()

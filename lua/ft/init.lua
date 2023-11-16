@@ -15,6 +15,7 @@ local extension_tbl = {
     ["zig"] = "zig",
     ["ts"] = "typescript",
     ["js"] = "javascript",
+    ["sh"] = "bash",
 }
 
 local function ft_detect ()

@@ -1,6 +1,9 @@
 local api = vim.api
 
 local switch_tbl = {
+    ["On"] = "Off",
+    ["Off"] = "On",
+
     ["true"] = "false",
     ["false"] = "true",
     ["TRUE"] = "FALSE",
@@ -9,6 +12,7 @@ local switch_tbl = {
     ["False"] = "True",
     ["and"] = "or",
     ["or"] = "and",
+
 
     ["=="] = "!=",
     ["!="] = "==",
