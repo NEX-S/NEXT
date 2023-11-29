@@ -27,7 +27,7 @@ _G.FOLD_TEXT = function ()
     local indent = s_str:find("%S") - 1
 
     -- return s_str .. ' '
-    return string.rep(' ', indent - 2) .. '' .. s_str:sub(indent)
+    return string.rep(' ', indent - 2) .. '' .. s_str:sub(indent) .. " ..."
 end
 
 api.nvim_set_keymap('n', ' ', "za", { noremap = true })

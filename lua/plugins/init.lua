@@ -72,5 +72,6 @@ require "lazy".setup {
     spec = {
         { import = "plugins.treesitter" },
         { import = "plugins.lspconfig" },
+        { import = "plugins.dap" },
     },
 }
